@@ -1,0 +1,9 @@
+﻿  dllmain.cpp
+  stdafx.cpp
+  GameLibrary.cpp
+c:\users\daniel\documents\visual studio 2015\projects\tp_so2_v4\gamelibrary\gamelibrary.cpp(7): warning C4273: 'Teste': inconsistent dll linkage
+  c:\users\daniel\documents\visual studio 2015\projects\tp_so2_v4\gamelibrary\gamelib.h(17): note: see previous definition of 'Teste'
+  Generating Code...
+     Creating library c:\users\daniel\documents\visual studio 2015\Projects\TP_SO2_V4\Debug\GameLibrary.lib and object c:\users\daniel\documents\visual studio 2015\Projects\TP_SO2_V4\Debug\GameLibrary.exp
+  GameLibrary.vcxproj -> c:\users\daniel\documents\visual studio 2015\Projects\TP_SO2_V4\Debug\GameLibrary.dll
+  GameLibrary.vcxproj -> c:\users\daniel\documents\visual studio 2015\Projects\TP_SO2_V4\Debug\GameLibrary.pdb (Full PDB)
