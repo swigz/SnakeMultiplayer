@@ -1,9 +1,10 @@
-﻿  dllmain.cpp
-  stdafx.cpp
+﻿  stdafx.cpp
   GameLibrary.cpp
+c:\users\daniel\documents\visual studio 2015\projects\tp_so2_v4\gamelibrary\gamelib.h(32): warning C4101: 'fInit': unreferenced local variable
+c:\users\daniel\documents\visual studio 2015\projects\tp_so2_v4\gamelibrary\gamelib.h(32): warning C4101: 'fIgnore': unreferenced local variable
 c:\users\daniel\documents\visual studio 2015\projects\tp_so2_v4\gamelibrary\gamelibrary.cpp(7): warning C4273: 'Teste': inconsistent dll linkage
-  c:\users\daniel\documents\visual studio 2015\projects\tp_so2_v4\gamelibrary\gamelib.h(17): note: see previous definition of 'Teste'
+  c:\users\daniel\documents\visual studio 2015\projects\tp_so2_v4\gamelibrary\gamelib.h(84): note: see previous definition of 'Teste'
   Generating Code...
-     Creating library c:\users\daniel\documents\visual studio 2015\Projects\TP_SO2_V4\Debug\GameLibrary.lib and object c:\users\daniel\documents\visual studio 2015\Projects\TP_SO2_V4\Debug\GameLibrary.exp
-  GameLibrary.vcxproj -> c:\users\daniel\documents\visual studio 2015\Projects\TP_SO2_V4\Debug\GameLibrary.dll
-  GameLibrary.vcxproj -> c:\users\daniel\documents\visual studio 2015\Projects\TP_SO2_V4\Debug\GameLibrary.pdb (Full PDB)
+     Creating library C:\Users\Daniel\documents\visual studio 2015\Projects\TP_SO2_V4\Debug\GameLibrary.lib and object C:\Users\Daniel\documents\visual studio 2015\Projects\TP_SO2_V4\Debug\GameLibrary.exp
+  GameLibrary.vcxproj -> C:\Users\Daniel\documents\visual studio 2015\Projects\TP_SO2_V4\Debug\GameLibrary.dll
+  GameLibrary.vcxproj -> C:\Users\Daniel\documents\visual studio 2015\Projects\TP_SO2_V4\Debug\GameLibrary.pdb (Full PDB)
