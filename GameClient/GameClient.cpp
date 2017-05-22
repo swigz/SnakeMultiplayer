@@ -18,8 +18,22 @@ HANDLE MutexOcupado;
 void gotoxy(int x, int y);
 
 int _tmain(int argc, TCHAR *argv[]) {
+	int lin = 5, col=5;
+
 	Teste();
+	board board = { 0 };
+	CriaMapaNormal(lin, col, board);
+	int i, j;
+	for (j = 0; j < col; j++) {
+		for (i = 0; i < lin; i++) {
+			_tprintf(TEXT("%d"),board.cells);
+		}
+		_tprintf(TEXT("\n"));
+	}
 	
+}
+
+int criarThread() {
 	SYSTEMTIME instantei, instantef;
 	TCHAR resp;
 	DWORD threadId, tid; //Id da thread a ser criada
@@ -40,13 +54,13 @@ int _tmain(int argc, TCHAR *argv[]) {
 		GetSystemTime(&instantei);
 		for (int i = 0; i < N; i++) {
 			myArg.id = i;
-			_tprintf(TEXT("\n --- CLIENTE %d ----\n"),i+1);
+			_tprintf(TEXT("\n --- CLIENTE %d ----\n"), i + 1);
 			hThreads[i] = CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)FThread, (LPVOID)&myArg, 0, &tid);
 			if (hThreads[i] == INVALID_HANDLE_VALUE) {
 				_tprintf(TEXT("Nao ha memoria para criar threads\n"));
 				return -1;
 			}
-			
+
 			Sleep(100);
 		}
 		SetThreadPriority(hThreads[0], THREAD_PRIORITY_LOWEST);
@@ -92,11 +106,7 @@ int _tmain(int argc, TCHAR *argv[]) {
 	}
 	_tprintf(TEXT("[Thread Principal %d]Vou terminar..."), GetCurrentThreadId());
 	return 0;
-
-
 }
-
-
 
 
 
