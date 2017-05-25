@@ -89,16 +89,17 @@ void CriaMapaNormal(int x, int y, board &b) {
 	//ciclo de preenchimento
 	for (j = 0; j < y; j++) {
 		for (i = 0; i < x; i++) {
-			if (j == 0 || j == j - 1 || i == 0 || i == i - 1) {
-				b.cells[(y*j) + i] = WALL;
-				_tprintf(TEXT("parede \n"));
+			if (j == 0 || j == y - 1 || i == 0 || i == x - 1) {
+				b.cells[(y*j) + i] = 1;
+				//_tprintf(TEXT("parede \n"));
 			}
 			else {
-				b.cells[(y*j) + i] = BLANK;
-				_tprintf(TEXT("vazio \n"));
+				b.cells[(y*j) + i] = 0;
+				//_tprintf(TEXT("vazio \n"));
 			}
 		}
 	}
+
 	
 }
 

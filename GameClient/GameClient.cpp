@@ -1,4 +1,5 @@
 #include "..\GameLibrary\GameLib.h"
+#include "Janelas.h"
 #include <windows.h>
 #include <tchar.h>
 #include <io.h>
@@ -18,18 +19,21 @@ HANDLE MutexOcupado;
 void gotoxy(int x, int y);
 
 int _tmain(int argc, TCHAR *argv[]) {
-	int lin = 5, col=5;
+	int lin = 7, col=7;
 
-	Teste();
+	/*Teste();
 	board board = { 0 };
 	CriaMapaNormal(lin, col, board);
 	int i, j;
 	for (j = 0; j < col; j++) {
 		for (i = 0; i < lin; i++) {
-			_tprintf(TEXT("%d"),board.cells);
+			_tprintf(TEXT("%d "), board.cells[(col*j) + i]);
 		}
 		_tprintf(TEXT("\n"));
-	}
+	}*/
+	
+
+
 	
 }
 

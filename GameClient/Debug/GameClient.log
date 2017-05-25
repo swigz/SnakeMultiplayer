@@ -1,9 +1,8 @@
 ﻿  GameClient.cpp
 c:\users\daniel\documents\visual studio 2015\projects\tp_so2_v4\gamelibrary\gamelib.h(40): warning C4101: 'fInit': unreferenced local variable
 c:\users\daniel\documents\visual studio 2015\projects\tp_so2_v4\gamelibrary\gamelib.h(40): warning C4101: 'fIgnore': unreferenced local variable
-c:\users\daniel\documents\visual studio 2015\projects\tp_so2_v4\gameclient\gameclient.cpp(29): warning C4477: 'wprintf' : format string '%d' requires an argument of type 'int', but variadic argument 1 has type 'int *'
-c:\users\daniel\documents\visual studio 2015\projects\tp_so2_v4\gameclient\gameclient.cpp(40): warning C4101: 'hT': unreferenced local variable
-c:\users\daniel\documents\visual studio 2015\projects\tp_so2_v4\gameclient\gameclient.cpp(39): warning C4101: 'threadId': unreferenced local variable
-c:\users\daniel\documents\visual studio 2015\projects\tp_so2_v4\gameclient\gameclient.cpp(114): warning C4101: 'i': unreferenced local variable
+c:\users\daniel\documents\visual studio 2015\projects\tp_so2_v4\gameclient\gameclient.cpp(44): warning C4101: 'hT': unreferenced local variable
+c:\users\daniel\documents\visual studio 2015\projects\tp_so2_v4\gameclient\gameclient.cpp(43): warning C4101: 'threadId': unreferenced local variable
+c:\users\daniel\documents\visual studio 2015\projects\tp_so2_v4\gameclient\gameclient.cpp(118): warning C4101: 'i': unreferenced local variable
   GameClient.vcxproj -> C:\Users\Daniel\documents\visual studio 2015\Projects\TP_SO2_V4\Debug\GameClient.exe
   GameClient.vcxproj -> C:\Users\Daniel\documents\visual studio 2015\Projects\TP_SO2_V4\Debug\GameClient.pdb (Full PDB)
