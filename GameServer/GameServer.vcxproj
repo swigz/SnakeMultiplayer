@@ -148,7 +148,7 @@
     <ClCompile Include="GameServer.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Commsr.h" />
+    <ClInclude Include="Comms.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

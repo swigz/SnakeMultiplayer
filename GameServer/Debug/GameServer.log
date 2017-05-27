@@ -1,0 +1,8 @@
+﻿  GameServer.cpp
+c:\users\daniel\documents\visual studio 2015\projects\tp_so2_v4\gameserver\gameserver.cpp(3): warning C4067: unexpected tokens following preprocessor directive - expected a newline
+c:\users\daniel\documents\visual studio 2015\projects\tp_so2_v4\gamelibrary\gamelib.h(40): warning C4101: 'fInit': unreferenced local variable
+c:\users\daniel\documents\visual studio 2015\projects\tp_so2_v4\gamelibrary\gamelib.h(40): warning C4101: 'fIgnore': unreferenced local variable
+c:\users\daniel\documents\visual studio 2015\projects\tp_so2_v4\gameserver\comms.h(97): warning C4474: 'wprintf' : too many arguments passed for format string
+  c:\users\daniel\documents\visual studio 2015\projects\tp_so2_v4\gameserver\comms.h(97): note: placeholders and their parameters expect 0 variadic arguments, but 1 were provided
+  GameServer.vcxproj -> C:\Users\Daniel\documents\visual studio 2015\Projects\TP_SO2_V4\Debug\GameServer.exe
+  GameServer.vcxproj -> C:\Users\Daniel\documents\visual studio 2015\Projects\TP_SO2_V4\Debug\GameServer.pdb (Full PDB)
