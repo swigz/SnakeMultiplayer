@@ -1,0 +1,6 @@
+﻿  Main.cpp
+c:\users\daniel\documents\visual studio 2015\projects\tp_so2_v4\client\clientcomm.h(47): warning C4715: 'readMsg': not all control paths return a value
+c:\users\daniel\documents\visual studio 2015\projects\tp_so2_v4\client\clientcomm.h(64): warning C4715: 'sendMsg': not all control paths return a value
+c:\users\daniel\documents\visual studio 2015\projects\tp_so2_v4\client\clientcomm.h(115): warning C4715: 'connectToServer': not all control paths return a value
+  Client.vcxproj -> C:\Users\Daniel\documents\visual studio 2015\Projects\TP_SO2_V4\Debug\Client.exe
+  Client.vcxproj -> C:\Users\Daniel\documents\visual studio 2015\Projects\TP_SO2_V4\Debug\Client.pdb (Full PDB)
