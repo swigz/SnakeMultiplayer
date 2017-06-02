@@ -1,20 +1,24 @@
-
 #include "ClientComm.h"
 
-
-LRESULT CALLBACK TrataEventos(HWND, UINT, WPARAM, LPARAM);
 TCHAR *szProgName = TEXT("Base");
-HWND inputfield, button;
+HWND initialMenu[INITIAL_MENU_SIZE];
+HWND mainMenu[5];
+MSG msg;
+
 
 int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, int nCmdShow) {
-	HWND hWnd;		
+	
+
+	
+	HWND hWnd;
 	MSG lpMsg;		
 	WNDCLASSEX wcApp;	
-	BOOL ret;			
+	BOOL ret;	
+	
 	wcApp.cbSize = sizeof(WNDCLASSEX);	
 	wcApp.hInstance = hInst;
 	wcApp.lpszClassName = szProgName;
-	wcApp.lpfnWndProc = TrataEventos;	    
+	wcApp.lpfnWndProc = MainEvent;
 	wcApp.style = CS_HREDRAW | CS_VREDRAW;
 	wcApp.hIcon = LoadIcon(NULL, IDI_APPLICATION);
 												 
@@ -27,19 +31,19 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, int nC
 	
 	if (!RegisterClassEx(&wcApp))
 		return(0);
-	
 	hWnd = CreateWindow(
 		szProgName,		
-		TEXT("Exemplo de Janela Principal em C"),
+		TEXT("Snek"),
 		WS_OVERLAPPEDWINDOW,
-		CW_USEDEFAULT,	
+		CW_USEDEFAULT,
 		CW_USEDEFAULT,
 		CW_USEDEFAULT,
 		CW_USEDEFAULT,
 		(HWND)HWND_DESKTOP,	
 		(HMENU)NULL,			
 		(HINSTANCE)hInst,
-		0);				
+		0);
+
 	ShowWindow(hWnd, nCmdShow);	
 	UpdateWindow(hWnd);		
 
@@ -52,18 +56,46 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, int nC
 	
 	return((int)lpMsg.wParam);	
 }
-LRESULT CALLBACK TrataEventos(HWND hWnd, UINT messg, WPARAM wParam, LPARAM lParam) {
+
+
+void showSingleElement(HWND hWnd, UINT dim)
+{
+		if (!IsWindowVisible(hWnd))
+			ShowWindow(hWnd, SW_SHOW);
+	
+}
+void showMultipleElement(HWND hWnd[], UINT dim)
+{
+	if (dim < 1) return;
+	for (short int i = 0; i < dim; i++)
+		if (!IsWindowVisible(hWnd[i]))
+			ShowWindow(hWnd[i], SW_SHOW);
+}
+
+void SetupInitialMenu(HWND hWnd) {
+	initialMenu[0] = CreateWindow(TEXT("STATIC"), TEXT("Servers - Online"), WS_CHILD, 450, 150, 150, 25, hWnd, NULL, NULL, NULL);
+	initialMenu[1] = CreateWindow(TEXT("EDIT"), TEXT(""), WS_CHILD | WS_BORDER, 450, 175, 150, 25, hWnd, NULL, NULL, NULL);
+	initialMenu[2] = CreateWindow(TEXT("BUTTON"), TEXT("Entrar"), WS_CHILD, 450, 200, 150, 25, hWnd, (HMENU) LOGIN_BUTTON, NULL, NULL);
+}
+
+LRESULT CALLBACK MainEvent(HWND hWnd, UINT messg, WPARAM wParam, LPARAM lParam) {
 	switch (messg) {
 	case WM_CREATE:
-		inputfield = CreateWindow(TEXT("EDIT"), TEXT(""), WS_BORDER | WS_CHILD | WS_VISIBLE, 100, 100, 50, 25, hWnd, NULL, NULL, NULL);
+		SetupInitialMenu(hWnd);
+		showMultipleElement(initialMenu, 3);
 		break;
-	//case WM_COMMAND:
-	//	switch (LOWORD(wParam)) {
-	//	default:
-	//		break;
-	//	}
-	case WM_DESTROY:		
+	case WM_COMMAND:
+		/*switch (LOWORD(wParam)) {
+		case LOGIN_BUTTON:
+			break;
+		}*/
+		break;
+	case WM_DESTROY:
+		closeClient(hPipe);
 		PostQuitMessage(0);
+		break;
+	case WM_PAINT:
+		
 		break;
 	default:		
 		return(DefWindowProc(hWnd, messg, wParam, lParam));

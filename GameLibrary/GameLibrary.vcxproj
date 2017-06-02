@@ -142,6 +142,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Conts.h" />
     <ClInclude Include="GameLib.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />

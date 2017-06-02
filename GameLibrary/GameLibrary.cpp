@@ -3,6 +3,7 @@
 
 #include "stdafx.h"
 #include "GameLib.h"
+
 int ola=0;
 void Teste() {
 	if (ola == 0) {

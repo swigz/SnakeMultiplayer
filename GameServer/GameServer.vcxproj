@@ -150,6 +150,9 @@
   <ItemGroup>
     <ClInclude Include="Comms.h" />
   </ItemGroup>
+  <ItemGroup>
+    <Library Include="..\Debug\GameLibrary.lib" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

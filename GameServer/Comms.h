@@ -4,50 +4,71 @@
 #include <Windows.h>
 #include <strsafe.h>
 #define BUFSIZE 512
+int ConnectedClients=0;
 
 
-VOID GetAnswerToRequest(LPTSTR pchRequest,
-	LPTSTR pchReply,
-	LPDWORD pchBytes)
-	// This routine is a simple function to print the client request to the console
-	// and populate the reply buffer with a default data string. This is where you
-	// would put the actual client request processing code that runs in the context
-	// of an instance thread. Keep in mind the main thread will continue to wait for
-	// and receive other client connections while the instance thread is working.
+
+
+int writeClientResponse(HANDLE hPipe, Message answer)
 {
-	_tprintf(TEXT("Client Request String:\"%s\"\n"), pchRequest);
+	DWORD cbWritten = 0;
+	BOOL fSuccess = FALSE;
+	OVERLAPPED OverlWr = { 0 };
 
-	// Check the outgoing message to make sure it's not too long for the buffer.
-	if (FAILED(StringCchCopy(pchReply, BUFSIZE, TEXT("default answer from server"))))
-	{
-		*pchBytes = 0;
-		pchReply[0] = 0;
-		printf("StringCchCopy failed, no outgoing message.\n");
-		return;
-	}
-	*pchBytes = (lstrlen(pchReply) + 1) * sizeof(TCHAR);
+	ZeroMemory(&OverlWr, sizeof(OverlWr));
+	//ResetEvent(WriteReady);
+	//OverlWr.hEvent = WriteReady;
+
+	fSuccess = WriteFile(hPipe, &answer, sizeof(Message), &cbWritten, &OverlWr);
+	//WaitForSingleObject(WriteReady, INFINITE);
+
+	//GetOverlappedResult(hPipe, &OverlWr, &cbWritten, FALSE);
+	if (cbWritten < sizeof(Message))
+		_tprintf(TEXT("\nCouldn't write all the information. Error: %d\nCode:%d"), GetLastError(), answer.code);
+	return 1;
 }
 
-	
-DWORD WINAPI InstanceThread(LPVOID lpvParam)
-// This routine is a thread processing function to read from and reply to a client
-// via the open pipe connection passed from the main loop. Note this allows
-// the main loop to continue executing, potentially creating more threads of
-// of this procedure to run concurrently, depending on the number of incoming
-// client connections.
+void login(LPVOID param, TCHAR* name, Message answer) {
+	for (int i = 0; i < ConnectedClients; i++) {
+		if (players[i].hPipe != NULL && _tcscmp(name, players[i].name) == 0) {
+			//_stprintf(answer.info, TEXT("%sJá existe um jogador com esse nome, escolha outro\n"), answer.info);
+			answer.code = ERROR_NAME_EXISTS;
+			writeClientResponse(players[i].hPipe, answer);
+			return;
+		}
+		else {
+			ConnectedClients++;
+			if (players[ConnectedClients].hPipe == NULL) {
+				players[ConnectedClients].hPipe = param;
+				players[ConnectedClients].logged = TRUE;
+				players[ConnectedClients].inGame = FALSE;
+			}
+		}
+	}
+}
+
+void ProcessClientMessage(LPVOID param, Message request, Message answer) {
+	switch (request.code) {
+	case R_CONNECT: {
+		login(param, request.name, answer);
+		break;
+	}
+	}
+
+}
+DWORD WINAPI InstanceThread(LPVOID param)
+
 {
 	HANDLE hHeap = GetProcessHeap();
 	TCHAR* pchRequest = (TCHAR*)HeapAlloc(hHeap, 0, BUFSIZE * sizeof(TCHAR));
 	TCHAR* pchReply = (TCHAR*)HeapAlloc(hHeap, 0, BUFSIZE * sizeof(TCHAR));
-
+	Message request, answer;
 	DWORD cbBytesRead = 0, cbReplyBytes = 0, cbWritten = 0;
 	BOOL fSuccess = FALSE;
 	HANDLE hPipe = NULL;
-	if (lpvParam == NULL)
+	if (param == NULL)
 	{
-		printf("\nERROR - Pipe Server Failure:\n");
-		printf("   InstanceThread got an unexpected NULL value in lpvParam.\n");
-		printf("   InstanceThread exitting.\n");
+
 		if (pchReply != NULL) HeapFree(hHeap, 0, pchReply);
 		if (pchRequest != NULL) HeapFree(hHeap, 0, pchRequest);
 		return (DWORD)-1;
@@ -70,25 +91,11 @@ DWORD WINAPI InstanceThread(LPVOID lpvParam)
 		if (pchRequest != NULL) HeapFree(hHeap, 0, pchRequest);
 		return (DWORD)-1;
 	}
+	hPipe = (HANDLE)param;
 
-	// Print verbose messages. In production code, this should be for debugging only.
-	printf("InstanceThread created, receiving and processing messages.\n");
-
-	// The thread's parameter is a handle to a pipe object instance. 
-
-	hPipe = (HANDLE)lpvParam;
-
-	// Loop until done reading
 	while (1)
 	{
-		// Read client requests from the pipe. This simplistic code only allows messages
-		// up to BUFSIZE characters in length.
-		fSuccess = ReadFile(
-			hPipe,        // handle to pipe 
-			pchRequest,    // buffer to receive data 
-			BUFSIZE * sizeof(TCHAR), // size of buffer 
-			&cbBytesRead, // number of bytes read 
-			NULL);        // not overlapped I/O 
+		fSuccess = ReadFile(hPipe, &request, sizeof(Message), &cbBytesRead, NULL);
 
 		if (!fSuccess || cbBytesRead == 0)
 		{
@@ -103,28 +110,8 @@ DWORD WINAPI InstanceThread(LPVOID lpvParam)
 			break;
 		}
 
-		// Process the incoming message.
-		GetAnswerToRequest(pchRequest, pchReply, &cbReplyBytes);
-
-		// Write the reply to the pipe. 
-		fSuccess = WriteFile(
-			hPipe,        // handle to pipe 
-			pchReply,     // buffer to write from 
-			cbReplyBytes, // number of bytes to write 
-			&cbWritten,   // number of bytes written 
-			NULL);        // not overlapped I/O 
-
-		if (!fSuccess || cbReplyBytes != cbWritten)
-		{
-			_tprintf(TEXT("InstanceThread WriteFile failed, GLE=%d.\n"), GetLastError());
-			break;
-		}
+		ProcessClientMessage(param, request, answer);
 	}
-
-	// Flush the pipe to allow the client to read the pipe's contents 
-	// before disconnecting. Then disconnect the pipe, and close the 
-	// handle to this pipe instance. 
-
 	FlushFileBuffers(hPipe);
 	DisconnectNamedPipe(hPipe);
 	CloseHandle(hPipe);

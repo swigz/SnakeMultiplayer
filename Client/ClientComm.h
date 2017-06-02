@@ -1,70 +1,23 @@
-#pragma once
-#define BUFSIZE 512
-#define SHMEMSIZE 4096 
-#include <windows.h>
-#include <tchar.h>
-#include <io.h>
-#include <fcntl.h>
-#include <stdio.h>
-#include <time.h>
-#include <memory.h> 
-#include <conio.h>
+
+#include "Resource.h"
 HANDLE hPipe;
-LPTSTR lpvMessage = TEXT("Default message from client.");
-TCHAR  chBuf[BUFSIZE];
 BOOL   fSuccess = FALSE;
 DWORD  cbRead, cbToWrite, cbWritten, dwMode;
 LPTSTR lpszPipename = TEXT("\\\\.\\pipe\\pipename");
-void closeClient() {
+TCHAR Username[256];
+
+void closeClient(HANDLE hPipe) {
 	CloseHandle(hPipe);
 }
-int readMsg() {
-	do
-	{
-		// Read from the pipe. 
 
-		fSuccess = ReadFile(
-			hPipe,    // pipe handle 
-			chBuf,    // buffer to receive reply 
-			BUFSIZE * sizeof(TCHAR),  // size of buffer 
-			&cbRead,  // number of bytes read 
-			NULL);    // not overlapped 
-
-		if (!fSuccess && GetLastError() != ERROR_MORE_DATA)
-			break;
-
-		_tprintf(TEXT("\"%s\"\n"), chBuf);
-	} while (!fSuccess);  // repeat loop if ERROR_MORE_DATA 
-
-	if (!fSuccess)
-	{
-		_tprintf(TEXT("ReadFile from pipe failed. GLE=%d\n"), GetLastError());
-		return -1;
-	}
-
-	printf("\n<End of message, press ENTER to terminate connection and exit>");
-	_getch();
-}
-int sendMsg() {
-	cbToWrite = (lstrlen(lpvMessage) + 1) * sizeof(TCHAR);
-	_tprintf(TEXT("Sending %d byte message: \"%s\"\n"), cbToWrite, lpvMessage);
-
-	fSuccess = WriteFile(
-		hPipe,                  // pipe handle 
-		lpvMessage,             // message 
-		cbToWrite,              // message length 
-		&cbWritten,             // bytes written 
-		NULL);                  // not overlapped 
-
-	if (!fSuccess)
-	{
-		_tprintf(TEXT("WriteFile to pipe failed. GLE=%d\n"), GetLastError());
-		return -1;
-	}
+DWORD WINAPI ClientThread(LPVOID param) {
+	return 1;
 }
 
-
-int connectToServer() {
+int connectToServer(HWND hWnd) {
+	HANDLE hThread;
+	DWORD dwMode, dwThreadId = 0;
+	TCHAR str[256];
 	while (1)
 	{
 		hPipe = CreateFile(
@@ -86,7 +39,6 @@ int connectToServer() {
 
 		if (GetLastError() != ERROR_PIPE_BUSY)
 		{
-			_tprintf(TEXT("Could not open pipe. GLE=%d\n"), GetLastError());
 			return -1;
 		}
 
@@ -94,11 +46,17 @@ int connectToServer() {
 
 		if (!WaitNamedPipe(lpszPipename, 20000))
 		{
-			printf("Could not open pipe: 20 second wait timed out.");
+
 			return -1;
 		}
 	}
-
+	hThread = CreateThread(NULL, 0, ClientThread, (LPVOID)hWnd, 0, &dwThreadId);
+	if (hThread == NULL)
+	{
+		_stprintf(str, TEXT("Error while thread was being created. Error: %d\n "), GetLastError());
+		MessageBox(hWnd, str, TEXT("Error"), MB_ICONERROR);
+		DestroyWindow(hWnd);
+	}
 	// The pipe connected; change to message-read mode. 
 
 	dwMode = PIPE_READMODE_MESSAGE;
@@ -109,7 +67,7 @@ int connectToServer() {
 		NULL);    // don't set maximum time 
 	if (!fSuccess)
 	{
-		_tprintf(TEXT("SetNamedPipeHandleState failed. GLE=%d\n"), GetLastError());
 		return -1;
 	}
+	return 1;
 }
