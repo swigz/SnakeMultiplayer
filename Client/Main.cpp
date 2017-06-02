@@ -3,12 +3,7 @@
 TCHAR *szProgName = TEXT("Base");
 HWND initialMenu[INITIAL_MENU_SIZE];
 HWND mainMenu[5];
-MSG msg;
-
-
 int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, int nCmdShow) {
-	
-
 	
 	HWND hWnd;
 	MSG lpMsg;		
@@ -79,23 +74,24 @@ void SetupInitialMenu(HWND hWnd) {
 }
 
 LRESULT CALLBACK MainEvent(HWND hWnd, UINT messg, WPARAM wParam, LPARAM lParam) {
+	
+
 	switch (messg) {
 	case WM_CREATE:
 		SetupInitialMenu(hWnd);
 		showMultipleElement(initialMenu, 3);
 		break;
 	case WM_COMMAND:
-		/*switch (LOWORD(wParam)) {
+		switch (LOWORD(wParam)) {
 		case LOGIN_BUTTON:
+			GetWindowText(initialMenu[1], username, GetWindowTextLength(initialMenu[1] + 1));
 			break;
-		}*/
+		}
 		break;
+
 	case WM_DESTROY:
 		closeClient(hPipe);
 		PostQuitMessage(0);
-		break;
-	case WM_PAINT:
-		
 		break;
 	default:		
 		return(DefWindowProc(hWnd, messg, wParam, lParam));

@@ -4,14 +4,20 @@ HANDLE hPipe;
 BOOL   fSuccess = FALSE;
 DWORD  cbRead, cbToWrite, cbWritten, dwMode;
 LPTSTR lpszPipename = TEXT("\\\\.\\pipe\\pipename");
-TCHAR Username[256];
+TCHAR username[256];
 
 void closeClient(HANDLE hPipe) {
 	CloseHandle(hPipe);
 }
 
 DWORD WINAPI ClientThread(LPVOID param) {
-	return 1;
+	DWORD cbBytesRead = 0;
+	BOOL fSuccess = FALSE;
+	HANDLE ReadReady;
+	OVERLAPPED OverlRd = { 0 };
+	HWND hWnd = (HWND)param;
+	TCHAR str[256];
+	
 }
 
 int connectToServer(HWND hWnd) {
