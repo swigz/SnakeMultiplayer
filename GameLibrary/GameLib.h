@@ -11,8 +11,7 @@ typedef struct Board {
 }board;
 typedef struct Players {
 	HANDLE hPipe;
-	BOOL logged=false;
-	BOOL inGame;
+	int status;
 	int score;
 	TCHAR name[NAMESIZE];
 	float speed;

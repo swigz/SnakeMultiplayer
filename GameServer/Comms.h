@@ -1,13 +1,14 @@
 #pragma once
+#include "..\GameLibrary\GameLib.h";
 #include <stdio.h>
 #include <tchar.h>
 #include <Windows.h>
 #include <strsafe.h>
 #define BUFSIZE 512
 int ConnectedClients=0;
-
-
-
+players pl[MAX_PLAYERS];
+HANDLE hPipe = INVALID_HANDLE_VALUE, hThread = NULL, hMutex;
+LPTSTR pipename = TEXT("\\\\.\\pipe\\pipename");
 
 int writeClientResponse(HANDLE hPipe, Message answer)
 {
@@ -28,31 +29,74 @@ int writeClientResponse(HANDLE hPipe, Message answer)
 	return 1;
 }
 
+void sendMsgLogger(TCHAR* name, int code) {
+	_tprintf(TEXT("[SERVER] Sending command to: %s, --- Command: %d\n"),name, code);
+}
+
 void login(LPVOID param, TCHAR* name, Message answer) {
-	for (int i = 0; i < ConnectedClients; i++) {
-		if (players[i].hPipe != NULL && _tcscmp(name, players[i].name) == 0) {
-			//_stprintf(answer.info, TEXT("%sJá existe um jogador com esse nome, escolha outro\n"), answer.info);
-			answer.code = ERROR_NAME_EXISTS;
-			writeClientResponse(players[i].hPipe, answer);
-			return;
-		}
-		else {
-			ConnectedClients++;
-			if (players[ConnectedClients].hPipe == NULL) {
-				players[ConnectedClients].hPipe = param;
-				players[ConnectedClients].logged = TRUE;
-				players[ConnectedClients].inGame = FALSE;
+
+	if (ConnectedClients == 0) {
+		_tcscpy(pl[ConnectedClients].name, name);
+		pl[ConnectedClients].hPipe = param;
+		pl[ConnectedClients].status = LOGGED_IN;
+		answer.code = SERVER_LOGIN_SUCCESS;
+		sendMsgLogger(pl[ConnectedClients].name, answer.code);
+		_tprintf(TEXT("[SERVER] Vou enviar a resposta\n"));
+		writeClientResponse(pl[ConnectedClients].hPipe, answer);
+		ConnectedClients++;
+		return;
+	}
+	else {
+		for (int i = 0; i < ConnectedClients; i++) {
+			if (pl[i].hPipe != NULL && _tcscmp(name, pl[i].name) == 0) {
+				answer.code = SERVER_ERROR_NAME_EXISTS;
+				sendMsgLogger(pl[ConnectedClients].name, answer.code);
+				writeClientResponse(pl[i].hPipe, answer);
+				return;
+			}
+			else {
+				_tprintf(TEXT("[SERVER] Entrei na adicao de cliente\n"));
+				ConnectedClients++;
+				if (pl[ConnectedClients].hPipe == NULL) {
+					_tcscpy(pl[ConnectedClients].name, name);
+					pl[ConnectedClients].hPipe = param;
+					pl[ConnectedClients].status = LOGGED_IN;
+					answer.code = SERVER_LOGIN_SUCCESS;
+					sendMsgLogger(pl[ConnectedClients].name, answer.code);
+					writeClientResponse(pl[ConnectedClients].hPipe, answer);
+					return;
+				}
 			}
 		}
 	}
 }
 
+void cleanClientHandles(LPVOID param)
+{
+	
+	FlushFileBuffers(param);
+	DisconnectNamedPipe(param);
+	CloseHandle(param);
+}
+
+void tempcenas(LPVOID param, TCHAR* name, Message answer) {
+
+}
+
+void removeClient(LPVOID param, Message answer) {
+
+}
+
 void ProcessClientMessage(LPVOID param, Message request, Message answer) {
+	_tprintf(TEXT("[SERVER] Received command from: %s, --- Command: %d\n"), request.name, request.code);
 	switch (request.code) {
-	case R_CONNECT: {
+	case R_CONNECT: 
 		login(param, request.name, answer);
 		break;
-	}
+	case R_CHECK_GAME_STATUS:
+		break;
+	case R_LOGOUT:
+		break;
 	}
 
 }
@@ -62,7 +106,7 @@ DWORD WINAPI InstanceThread(LPVOID param)
 	HANDLE hHeap = GetProcessHeap();
 	TCHAR* pchRequest = (TCHAR*)HeapAlloc(hHeap, 0, BUFSIZE * sizeof(TCHAR));
 	TCHAR* pchReply = (TCHAR*)HeapAlloc(hHeap, 0, BUFSIZE * sizeof(TCHAR));
-	Message request, answer;
+	Message request, answer = { 0 };
 	DWORD cbBytesRead = 0, cbReplyBytes = 0, cbWritten = 0;
 	BOOL fSuccess = FALSE;
 	HANDLE hPipe = NULL;
@@ -118,8 +162,6 @@ DWORD WINAPI InstanceThread(LPVOID param)
 
 	HeapFree(hHeap, 0, pchRequest);
 	HeapFree(hHeap, 0, pchReply);
-
-	printf("InstanceThread exitting.\n");
 	return 1;
 }
 
@@ -127,13 +169,17 @@ DWORD WINAPI InstanceThread(LPVOID param)
 void listenForClients() {
 	BOOL fConnected = false, isAccepting = true;
 	DWORD dwThreadId = 0;
-	HANDLE hPipe = INVALID_HANDLE_VALUE, hThread = NULL;
-	LPTSTR pipename = TEXT("\\\\.\\pipe\\pipename");
-
-
+	hMutex = OpenMutex(MUTEX_ALL_ACCESS, FALSE, TEXT("Single Instance Mutex"));
+	if (hMutex == NULL)
+		hMutex = CreateMutex(NULL, FALSE, TEXT("Single Instance Mutex"));
+	else
+	{
+		_tprintf(TEXT("There is already a server running!\n\n"));
+		system("pause");
+		return;
+	}
 
 	while (isAccepting) {
-		_tprintf(TEXT("\n[SERVER] Pipe - %s"), pipename);
 		hPipe = CreateNamedPipe(
 			pipename,             // pipe name 
 			PIPE_ACCESS_DUPLEX,       // read/write access 

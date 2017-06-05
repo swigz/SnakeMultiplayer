@@ -1,13 +1,28 @@
-
 #include "Resource.h"
 HANDLE hPipe;
-BOOL   fSuccess = FALSE;
+BOOL fSuccess = FALSE;
 DWORD  cbRead, cbToWrite, cbWritten, dwMode;
 LPTSTR lpszPipename = TEXT("\\\\.\\pipe\\pipename");
 TCHAR username[256];
+int clientStatus;
 
 void closeClient(HANDLE hPipe) {
 	CloseHandle(hPipe);
+}
+
+void ProcessServerMessage(HWND hWnd, Message answer) {
+	int code = answer.code;
+	switch (code) {
+	case SERVER_LOGIN_SUCCESS:
+		clientStatus = LOGGED_IN;
+		break;
+	case SERVER_ERROR_NAME_EXISTS:
+		MessageBox(hWnd, TEXT("There is a user with that name"), TEXT("Error"), MB_ICONEXCLAMATION);
+		break;
+	default:
+		break;
+	}
+	InvalidateRect(hWnd, NULL, 1);
 }
 
 DWORD WINAPI ClientThread(LPVOID param) {
@@ -16,8 +31,53 @@ DWORD WINAPI ClientThread(LPVOID param) {
 	HANDLE ReadReady;
 	OVERLAPPED OverlRd = { 0 };
 	HWND hWnd = (HWND)param;
-	TCHAR str[256];
+	TCHAR str[NAMESIZE];
+	Message answer;
+
+	while (1)
+	{
+		fSuccess = ReadFile(hPipe, &answer, sizeof(Message), &cbBytesRead, &OverlRd);
+
+		//WaitForSingleObject(ReadReady, INFINITE);
+		//GetOverlappedResult(hPipe, &OverlRd, &cbBytesRead, FALSE);
+		if (cbBytesRead < sizeof(Message))
+		{
+			_stprintf(str, TEXT("ReadFile failed. Error: %d"), GetLastError());
+			MessageBox(hWnd, str, TEXT("Error"), MB_ICONERROR);
+			DestroyWindow(hWnd);
+		}
+		ProcessServerMessage(hWnd, answer);
+		if (answer.code == R_LOGOUT)
+			break;
+	}
+	return 1;
 	
+}
+void writeClientRequest(HWND hWnd, Message request) {
+	BOOL fSuccess = FALSE;
+	DWORD cbWritten;
+	OVERLAPPED OverlWr = { 0 };
+	TCHAR str[NAMESIZE];
+
+
+	fSuccess = WriteFile(hPipe, &request, sizeof(Message), &cbWritten, &OverlWr);
+	if (cbWritten < sizeof(Message))
+	{
+		_stprintf(str, TEXT("WriteFile maybe failed. Error: %d"), GetLastError());
+		MessageBox(hWnd, str, TEXT("Error"), MB_ICONERROR);
+		DestroyWindow(hWnd);
+	}
+}
+
+void sendRequest(HWND hWnd, int command) {
+	int dim;
+	TCHAR aux[NAMESIZE];
+	Message request;
+
+	_stprintf(aux, TEXT("%s"), username);
+	_tcscpy(request.name, aux);
+	request.code = command;
+	writeClientRequest(hWnd, request);
 }
 
 int connectToServer(HWND hWnd) {
@@ -52,7 +112,6 @@ int connectToServer(HWND hWnd) {
 
 		if (!WaitNamedPipe(lpszPipename, 20000))
 		{
-
 			return -1;
 		}
 	}

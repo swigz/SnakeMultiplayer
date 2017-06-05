@@ -15,7 +15,13 @@
 #include <time.h>
 #include <memory.h> 
 #include <conio.h>
+#include "..\GameLibrary\GameLib.h"
 
-#define LOGIN_BUTTON 400
 
 LRESULT CALLBACK MainEvent(HWND, UINT, WPARAM, LPARAM);
+void SetupInitialMenu(HWND hWnd);
+void buttonClickEvent(HWND hWnd, WPARAM wParam);
+void setupMainMenu(HWND hWnd);
+void showMultipleElement(HWND hWnd[], UINT dim);
+void showInitialMenu(HWND hWnd);
+void showMainMenu(HWND hWnd);
