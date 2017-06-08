@@ -1,91 +1,127 @@
 #pragma once
 #include "..\GameLibrary\GameLib.h";
-#include <stdio.h>
-#include <tchar.h>
-#include <Windows.h>
-#include <strsafe.h>
-#define BUFSIZE 512
 int ConnectedClients=0;
 players pl[MAX_PLAYERS];
-HANDLE hPipe = INVALID_HANDLE_VALUE, hThread = NULL, hMutex;
+HANDLE hPipe = INVALID_HANDLE_VALUE, hThread = NULL, hMutex, canWrite;
 LPTSTR pipename = TEXT("\\\\.\\pipe\\pipename");
+int gameStatus;
 
 int writeClientResponse(HANDLE hPipe, Message answer)
 {
+
 	DWORD cbWritten = 0;
 	BOOL fSuccess = FALSE;
 	OVERLAPPED OverlWr = { 0 };
 
 	ZeroMemory(&OverlWr, sizeof(OverlWr));
-	//ResetEvent(WriteReady);
-	//OverlWr.hEvent = WriteReady;
+	ResetEvent(canWrite);
+	OverlWr.hEvent = canWrite;
 
 	fSuccess = WriteFile(hPipe, &answer, sizeof(Message), &cbWritten, &OverlWr);
-	//WaitForSingleObject(WriteReady, INFINITE);
+	WaitForSingleObject(canWrite, INFINITE);
 
-	//GetOverlappedResult(hPipe, &OverlWr, &cbWritten, FALSE);
+	GetOverlappedResult(hPipe, &OverlWr, &cbWritten, FALSE);
 	if (cbWritten < sizeof(Message))
 		_tprintf(TEXT("\nCouldn't write all the information. Error: %d\nCode:%d"), GetLastError(), answer.code);
 	return 1;
 }
 
-void sendMsgLogger(TCHAR* name, int code) {
-	_tprintf(TEXT("[SERVER] Sending command to: %s, --- Command: %d\n"),name, code);
+TCHAR* getClientName(LPVOID param) {
+	for (short int i = 0; i < MAX_PLAYERS; i++) {
+		if (pl[i].hPipe = param) {
+			return pl[i].name;
+		}
+	}
+	return TEXT("");
+}
+void sendMsgLogger(LPVOID param, int code) {
+	_tprintf(TEXT("[SERVER] Sending command to: %s, --- Command: %d\n"),getClientName(param), code);
+}
+
+BOOL usernameExists(TCHAR* name) {
+	for (int i = 0; i < MAX_PLAYERS; i++)
+	{
+		if (pl[i].hPipe != NULL && _tcscmp(name, pl[i].name) == 0)
+			return TRUE;
+	}
+	return FALSE;
 }
 
 void login(LPVOID param, TCHAR* name, Message answer) {
 
-	if (ConnectedClients == 0) {
-		_tcscpy(pl[ConnectedClients].name, name);
-		pl[ConnectedClients].hPipe = param;
-		pl[ConnectedClients].status = LOGGED_IN;
-		answer.code = SERVER_LOGIN_SUCCESS;
-		sendMsgLogger(pl[ConnectedClients].name, answer.code);
-		_tprintf(TEXT("[SERVER] Vou enviar a resposta\n"));
-		writeClientResponse(pl[ConnectedClients].hPipe, answer);
-		ConnectedClients++;
-		return;
-	}
-	else {
-		for (int i = 0; i < ConnectedClients; i++) {
-			if (pl[i].hPipe != NULL && _tcscmp(name, pl[i].name) == 0) {
-				answer.code = SERVER_ERROR_NAME_EXISTS;
-				sendMsgLogger(pl[ConnectedClients].name, answer.code);
+	if (!usernameExists(name)) {
+		for (int i = 0; i < MAX_PLAYERS; i++) {
+			if (pl[i].hPipe == NULL) {
+				_tcscpy(pl[i].name, name);
+				pl[i].hPipe = param;
+				pl[i].status = LOGGED_IN;
+				answer.code = SERVER_LOGIN_SUCCESS;
+				sendMsgLogger(param, answer.code);
 				writeClientResponse(pl[i].hPipe, answer);
 				return;
 			}
-			else {
-				_tprintf(TEXT("[SERVER] Entrei na adicao de cliente\n"));
-				ConnectedClients++;
-				if (pl[ConnectedClients].hPipe == NULL) {
-					_tcscpy(pl[ConnectedClients].name, name);
-					pl[ConnectedClients].hPipe = param;
-					pl[ConnectedClients].status = LOGGED_IN;
-					answer.code = SERVER_LOGIN_SUCCESS;
-					sendMsgLogger(pl[ConnectedClients].name, answer.code);
-					writeClientResponse(pl[ConnectedClients].hPipe, answer);
-					return;
-				}
-			}
 		}
+	}
+	else {
+		answer.code = SERVER_ERROR_NAME_EXISTS;
+		sendMsgLogger(param, answer.code);
+		writeClientResponse(param, answer);
+		return;
 	}
 }
 
 void cleanClientHandles(LPVOID param)
 {
-	
 	FlushFileBuffers(param);
 	DisconnectNamedPipe(param);
 	CloseHandle(param);
 }
 
-void tempcenas(LPVOID param, TCHAR* name, Message answer) {
+int writeServerBroadcast(Message answer)
+{
+	// Devolve o número de respostas enviadas (clientes que receberam resposta)
+	int num = 0;
 
+	for (int i = 0; i < MAX_PLAYERS; i++)
+		if (pl[i].hPipe != NULL)
+			num += writeClientResponse(pl[i].hPipe, answer);
+	return num;
+}
+void returnGameStatus(LPVOID param, Message answer) {
+	answer.code = gameStatus;
+	sendMsgLogger(getClientName(param), answer.code);
+	writeClientResponse(param, answer);
 }
 
-void removeClient(LPVOID param, Message answer) {
-
+void disconnectClient(LPVOID param, Message answer) {
+	//remove da lista
+	answer.code = SERVER_DISCONNECT;
+	for (int i = 0; i < MAX_PLAYERS; i++) {
+		if (pl[i].hPipe == param) {
+			sendMsgLogger(pl[i].name, answer.code);
+			writeClientResponse(pl[i].hPipe, answer);
+			pl[i] = { 0 };
+			pl[i].hPipe = NULL;
+			pl[i].status = DISCONNECTED;
+		}
+	}
+	cleanClientHandles(param);
+	return;
 }
+
+
+//
+//
+//switch (gameStatus) {
+//case SERVER_GAME_ACCEPTING:
+//	break;
+//case SERVER_NO_GAME_RUNNING:
+//	break;
+//case SERVER_GAME_IS_RUNNING:
+//	break;
+//default:
+//	break;
+//}
 
 void ProcessClientMessage(LPVOID param, Message request, Message answer) {
 	_tprintf(TEXT("[SERVER] Received command from: %s, --- Command: %d\n"), request.name, request.code);
@@ -94,14 +130,16 @@ void ProcessClientMessage(LPVOID param, Message request, Message answer) {
 		login(param, request.name, answer);
 		break;
 	case R_CHECK_GAME_STATUS:
+		returnGameStatus(param, answer);
 		break;
 	case R_LOGOUT:
+		disconnectClient(param, answer);
+		break;
+	defaul:
 		break;
 	}
-
 }
 DWORD WINAPI InstanceThread(LPVOID param)
-
 {
 	HANDLE hHeap = GetProcessHeap();
 	TCHAR* pchRequest = (TCHAR*)HeapAlloc(hHeap, 0, BUFSIZE * sizeof(TCHAR));
@@ -166,63 +204,3 @@ DWORD WINAPI InstanceThread(LPVOID param)
 }
 
 
-void listenForClients() {
-	BOOL fConnected = false, isAccepting = true;
-	DWORD dwThreadId = 0;
-	hMutex = OpenMutex(MUTEX_ALL_ACCESS, FALSE, TEXT("Single Instance Mutex"));
-	if (hMutex == NULL)
-		hMutex = CreateMutex(NULL, FALSE, TEXT("Single Instance Mutex"));
-	else
-	{
-		_tprintf(TEXT("There is already a server running!\n\n"));
-		system("pause");
-		return;
-	}
-
-	while (isAccepting) {
-		hPipe = CreateNamedPipe(
-			pipename,             // pipe name 
-			PIPE_ACCESS_DUPLEX,       // read/write access 
-			PIPE_TYPE_MESSAGE |       // message type pipe 
-			PIPE_READMODE_MESSAGE |   // message-read mode 
-			PIPE_WAIT,                // blocking mode 
-			PIPE_UNLIMITED_INSTANCES, // max. instances  
-			BUFSIZE,                  // output buffer size 
-			BUFSIZE,                  // input buffer size 
-			0,                        // client time-out 
-			NULL);                    // default security attribute 
-		if (hPipe == INVALID_HANDLE_VALUE)
-		{
-			_tprintf(TEXT("[SERVER] Criacao do pipe falhada, GLE=%d.\n"), GetLastError());
-			return;
-		}
-		//verifica se alguem connectou
-		fConnected = ConnectNamedPipe(hPipe, NULL) ?
-			TRUE : (GetLastError() == ERROR_PIPE_CONNECTED);
-		if (fConnected)
-		{
-			printf("Client connected, creating a processing thread.\n");
-
-			// Create a thread for this client. 
-			hThread = CreateThread(
-				NULL,              // no security attribute 
-				0,                 // default stack size 
-				InstanceThread,    // thread proc
-				(LPVOID)hPipe,    // thread parameter 
-				0,                 // not suspended 
-				&dwThreadId);      // returns thread ID 
-
-			if (hThread == NULL)
-			{
-				_tprintf(TEXT("CreateThread failed, GLE=%d.\n"), GetLastError());
-				return;
-			}
-			else CloseHandle(hThread);
-		}
-		else
-			// The client could not connect, so close the pipe. 
-			CloseHandle(hPipe);
-	}
-	return;
-
-}

@@ -1,14 +1,17 @@
 #include "Resource.h"
-HANDLE hPipe;
+#include "resource1.h"
+HANDLE hPipe, canWrite;
 BOOL fSuccess = FALSE;
 DWORD  cbRead, cbToWrite, cbWritten, dwMode;
-LPTSTR lpszPipename = TEXT("\\\\.\\pipe\\pipename");
+LPTSTR pipename = TEXT("\\\\.\\pipe\\pipename");
 TCHAR username[256];
 int clientStatus;
+int gameStatus;
 
 void closeClient(HANDLE hPipe) {
 	CloseHandle(hPipe);
 }
+
 
 void ProcessServerMessage(HWND hWnd, Message answer) {
 	int code = answer.code;
@@ -19,6 +22,14 @@ void ProcessServerMessage(HWND hWnd, Message answer) {
 	case SERVER_ERROR_NAME_EXISTS:
 		MessageBox(hWnd, TEXT("There is a user with that name"), TEXT("Error"), MB_ICONEXCLAMATION);
 		break;
+	case SERVER_GAME_ACCEPTING:
+	case SERVER_GAME_IS_RUNNING:
+	case SERVER_NO_GAME_RUNNING:
+		gameStatus = code;
+		break;
+	case SERVER_DISCONNECT:
+		//exitApp();
+		break;
 	default:
 		break;
 	}
@@ -28,18 +39,32 @@ void ProcessServerMessage(HWND hWnd, Message answer) {
 DWORD WINAPI ClientThread(LPVOID param) {
 	DWORD cbBytesRead = 0;
 	BOOL fSuccess = FALSE;
-	HANDLE ReadReady;
+	HANDLE canRead;
 	OVERLAPPED OverlRd = { 0 };
 	HWND hWnd = (HWND)param;
 	TCHAR str[NAMESIZE];
 	Message answer;
 
+
+	canRead = CreateEvent(NULL, TRUE, FALSE, NULL);
+	if (canRead == NULL)
+	{
+		_stprintf(str, TEXT("Error while creating the event. Error: %d"), GetLastError());
+		MessageBox(hWnd, str, TEXT("Error"), MB_ICONERROR);
+		DestroyWindow(hWnd);
+	}
+
+
 	while (1)
 	{
+		ZeroMemory(&OverlRd, sizeof(OverlRd));
+		OverlRd.hEvent = canRead;
+		ResetEvent(canRead);
+
 		fSuccess = ReadFile(hPipe, &answer, sizeof(Message), &cbBytesRead, &OverlRd);
 
-		//WaitForSingleObject(ReadReady, INFINITE);
-		//GetOverlappedResult(hPipe, &OverlRd, &cbBytesRead, FALSE);
+		WaitForSingleObject(canRead, INFINITE);
+		GetOverlappedResult(hPipe, &OverlRd, &cbBytesRead, FALSE);
 		if (cbBytesRead < sizeof(Message))
 		{
 			_stprintf(str, TEXT("ReadFile failed. Error: %d"), GetLastError());
@@ -59,11 +84,18 @@ void writeClientRequest(HWND hWnd, Message request) {
 	OVERLAPPED OverlWr = { 0 };
 	TCHAR str[NAMESIZE];
 
+	
+	ZeroMemory(&OverlWr, sizeof(OverlWr));
+	ResetEvent(canWrite);
+	OverlWr.hEvent = canWrite;
+
 
 	fSuccess = WriteFile(hPipe, &request, sizeof(Message), &cbWritten, &OverlWr);
+	GetOverlappedResult(hPipe, &OverlWr, &cbWritten, FALSE);
+
 	if (cbWritten < sizeof(Message))
 	{
-		_stprintf(str, TEXT("WriteFile maybe failed. Error: %d"), GetLastError());
+		_stprintf(str, TEXT("File writing crash: %d"), GetLastError());
 		MessageBox(hWnd, str, TEXT("Error"), MB_ICONERROR);
 		DestroyWindow(hWnd);
 	}
@@ -73,6 +105,7 @@ void sendRequest(HWND hWnd, int command) {
 	int dim;
 	TCHAR aux[NAMESIZE];
 	Message request;
+
 
 	_stprintf(aux, TEXT("%s"), username);
 	_tcscpy(request.name, aux);
@@ -86,20 +119,16 @@ int connectToServer(HWND hWnd) {
 	TCHAR str[256];
 	while (1)
 	{
-		hPipe = CreateFile(
-			lpszPipename,   // pipe name 
-			GENERIC_READ |  // read and write access 
-			GENERIC_WRITE,
-			0,              // no sharing 
-			NULL,           // default security attributes
-			OPEN_EXISTING,  // opens existing pipe 
-			0,              // default attributes 
-			NULL);          // no template file 
-
-							// Break if the pipe handle is valid. 
-
-		if (hPipe != INVALID_HANDLE_VALUE)
+		hPipe = CreateFile(pipename, GENERIC_READ | GENERIC_WRITE, 0 | FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, OPEN_EXISTING, 0 | FILE_FLAG_OVERLAPPED, NULL);
+		if (hPipe != INVALID_HANDLE_VALUE) 
 			break;
+
+		if (GetLastError() != ERROR_PIPE_BUSY)
+		{
+			_stprintf(str, TEXT("CreateFile failed. Error: %d"), GetLastError());
+			MessageBox(hWnd, str, TEXT("Error"), MB_ICONERROR);
+			DestroyWindow(hWnd);
+		}
 
 		// Exit if an error other than ERROR_PIPE_BUSY occurs. 
 
@@ -110,20 +139,11 @@ int connectToServer(HWND hWnd) {
 
 		// All pipe instances are busy, so wait for 20 seconds. 
 
-		if (!WaitNamedPipe(lpszPipename, 20000))
+		if (!WaitNamedPipe(pipename, 20000))
 		{
 			return -1;
 		}
 	}
-	hThread = CreateThread(NULL, 0, ClientThread, (LPVOID)hWnd, 0, &dwThreadId);
-	if (hThread == NULL)
-	{
-		_stprintf(str, TEXT("Error while thread was being created. Error: %d\n "), GetLastError());
-		MessageBox(hWnd, str, TEXT("Error"), MB_ICONERROR);
-		DestroyWindow(hWnd);
-	}
-	// The pipe connected; change to message-read mode. 
-
 	dwMode = PIPE_READMODE_MESSAGE;
 	fSuccess = SetNamedPipeHandleState(
 		hPipe,    // pipe handle 
@@ -134,5 +154,20 @@ int connectToServer(HWND hWnd) {
 	{
 		return -1;
 	}
-	return 1;
+	hThread = CreateThread(NULL, 0, ClientThread, (LPVOID)hWnd, 0, &dwThreadId);
+	if (hThread == NULL)
+	{
+		_stprintf(str, TEXT("Error while thread was being created. Error: %d\n "), GetLastError());
+		MessageBox(hWnd, str, TEXT("Error"), MB_ICONERROR);
+		DestroyWindow(hWnd);
+	}
+
+	canWrite = CreateEvent(NULL, TRUE, FALSE, NULL);
+
+	if (canWrite == NULL)
+	{
+		_stprintf(str, TEXT("It was not possible to create the event"));
+		MessageBox(hWnd, str, TEXT("Error"), MB_ICONERROR);
+		DestroyWindow(hWnd);
+	}
 }

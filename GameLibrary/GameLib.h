@@ -4,6 +4,8 @@
 #include <memory.h> 
 #include <stdio.h>
 #include <stdlib.h>
+#include <io.h>
+#include <fcntl.h>
 #include "Conts.h"
 
 typedef struct Board {
@@ -28,11 +30,14 @@ typedef struct Game {
 }game;
 
 typedef struct Message {
+	int playerNumber;
 	TCHAR info[NAMESIZE];
 	TCHAR name[NAMESIZE];
+	TCHAR player2Name[NAMESIZE];
 	int code;
 	game game;
 }Message;
+
 
 #ifdef DLL_EXPORTS
 #define GAME_API __declspec(dllexport)
