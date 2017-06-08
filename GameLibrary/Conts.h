@@ -18,6 +18,7 @@
 #define CREATE_GAME_BUTTON 404
 #define JOIN_GAME_BUTTON 405
 #define GAMEMENU_BACK_BUTTON 406
+#define REFRESH_STATUS_BUTTON 407
 
 //responses comando do cliente
 #pragma once

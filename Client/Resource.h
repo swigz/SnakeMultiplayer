@@ -1,9 +1,10 @@
 #pragma once
-#define BUFSIZE 512
 #define SHMEMSIZE 4096 
 //status de jogo
 
-#define INITIAL_MENU_SIZE 4
+#define INITIAL_MENU_SIZE 3
+#define MAIN_MENU_SIZE 4
+#define GAME_MENU_SIZE 5
 
 #define NO_SERVER 704
 

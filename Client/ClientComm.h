@@ -103,9 +103,13 @@ void writeClientRequest(HWND hWnd, Message request) {
 
 void sendRequest(HWND hWnd, int command) {
 	int dim;
+	TCHAR str[NAMESIZE];
 	TCHAR aux[NAMESIZE];
 	Message request;
-
+	if (command == 1000) {
+		GetDlgItemText(hWnd, IDC_EDIT1, str, 80);
+		MessageBox(hWnd, str, TEXT("prioca"), MB_ICONEXCLAMATION);
+	}
 
 	_stprintf(aux, TEXT("%s"), username);
 	_tcscpy(request.name, aux);

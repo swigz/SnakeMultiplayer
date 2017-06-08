@@ -3,7 +3,7 @@ HINSTANCE hInstance;
 TCHAR *szProgName = TEXT("Base");
 HWND initialMenu[3];
 HWND mainMenu[4];
-HWND gameMenu[4];
+HWND gameMenu[5];
 
 int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, int nCmdShow) {
 	
@@ -80,21 +80,21 @@ void showMultipleElement(HWND hWnd[], UINT dim)
 
 
 void showInitialMenu(HWND hWnd) {
-	showMultipleElement(initialMenu, 3);
+	showMultipleElement(initialMenu, INITIAL_MENU_SIZE);
 }
 
 void showGameMenu(HWND hWnd) {
-	for (int i = 0; i < 4; i++) {
+	for (int i = 0; i < MAIN_MENU_SIZE; i++) {
 		hideSingleElement(mainMenu[i]);
 	}
-	showMultipleElement(gameMenu, 4);
+	showMultipleElement(gameMenu, GAME_MENU_SIZE);
 }
 
 void showMainMenu(HWND hWnd) {
-	for (int i = 0; i < 3; i++) {
+	for (int i = 0; i < INITIAL_MENU_SIZE; i++) {
 		hideSingleElement(initialMenu[i]);
 	}
-	showMultipleElement(mainMenu, 4);
+	showMultipleElement(mainMenu, MAIN_MENU_SIZE);
 }
 
 //CREATE MENU BUTTONS
@@ -116,7 +116,8 @@ void setupGameMenu(HWND hWnd){
 	gameMenu[0] = CreateWindow(TEXT("STATIC"), TEXT("Select an option"), WS_CHILD, 450, 150, 150, 25, hWnd, NULL, NULL, NULL);
 	gameMenu[1] = CreateWindow(TEXT("BUTTON"), TEXT("Join Game"), WS_CHILD, 450, 175, 150, 25, hWnd, (HMENU)JOIN_GAME_BUTTON, NULL, NULL);
 	gameMenu[2] = CreateWindow(TEXT("BUTTON"), TEXT("Create Game"), WS_CHILD, 450, 200, 150, 25, hWnd, (HMENU)CREATE_GAME_BUTTON, NULL, NULL);
-	gameMenu[3] = CreateWindow(TEXT("BUTTON"), TEXT("Back"), WS_CHILD, 450, 225, 150, 25, hWnd, (HMENU)GAMEMENU_BACK_BUTTON, NULL, NULL);
+	gameMenu[3] = CreateWindow(TEXT("BUTTON"), TEXT("Refresh server Status"), WS_CHILD, 450, 225, 150, 25, hWnd, (HMENU)REFRESH_STATUS_BUTTON, NULL, NULL);
+	gameMenu[4] = CreateWindow(TEXT("BUTTON"), TEXT("Back"), WS_CHILD, 450, 250, 150, 25, hWnd, (HMENU)GAMEMENU_BACK_BUTTON, NULL, NULL);
 }
 
 void createGameDialog(HWND hWnd) {
@@ -154,7 +155,15 @@ void buttonClickEvent(HWND hWnd, WPARAM wParam) {
 		InvalidateRect(hWnd, NULL, 1);
 		break;
 	case CREATE_GAME_BUTTON:
+		if (gameStatus != SERVER_NO_GAME_RUNNING) {
+			MessageBox(hWnd, TEXT("There is a game running or a game accepting players. Hit refresh to refresh."), TEXT("Warning"), MB_ICONHAND);
+			break;
+		}
 		createGameDialog(hWnd);
+		break;
+	case REFRESH_STATUS_BUTTON:
+		sendRequest(hWnd, R_CHECK_GAME_STATUS);
+		MessageBox(hWnd, TEXT("Server Status refreshed!"), TEXT("YAY!"), MB_ICONEXCLAMATION);
 		break;
 	case LOGOUT_BUTTON:
 		sendRequest(hWnd, R_LOGOUT);
@@ -205,10 +214,7 @@ BOOL CALLBACK createGameDialogProc(HWND hWnd, UINT messg, WPARAM wParam, LPARAM 
 	case WM_COMMAND:
 		switch (LOWORD(wParam)) {
 		case IDOK:
-			GetDlgItemText(hWnd, IDC_EDIT1, str, 80);
-			MessageBox(hWnd, str, TEXT("prioca"), MB_ICONEXCLAMATION);
-			sendRequest(hWnd, 1000);
-			//clientStatus = INGAME_LOBBY;
+			
 			EndDialog(hWnd, 0);
 			break;
 		case IDCANCEL:
@@ -262,6 +268,7 @@ LRESULT CALLBACK MainEvent(HWND hWnd, UINT messg, WPARAM wParam, LPARAM lParam) 
 		EndPaint(hWnd, &pt);
 		break;
 	case WM_KEYDOWN:
+		keyboardPressed(hWnd, wParam);
 		break;
 	case WM_DESTROY:
 		closeClient(hPipe);

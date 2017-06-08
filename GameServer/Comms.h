@@ -1,10 +1,11 @@
 #pragma once
 #include "..\GameLibrary\GameLib.h";
+#include "resource.h"
 int ConnectedClients=0;
 players pl[MAX_PLAYERS];
 HANDLE hPipe = INVALID_HANDLE_VALUE, hThread = NULL, hMutex, canWrite;
 LPTSTR pipename = TEXT("\\\\.\\pipe\\pipename");
-int gameStatus;
+int gameStatus = SERVER_NO_GAME_RUNNING;
 
 int writeClientResponse(HANDLE hPipe, Message answer)
 {
@@ -28,7 +29,7 @@ int writeClientResponse(HANDLE hPipe, Message answer)
 
 TCHAR* getClientName(LPVOID param) {
 	for (short int i = 0; i < MAX_PLAYERS; i++) {
-		if (pl[i].hPipe = param) {
+		if (pl[i].hPipe == param) {
 			return pl[i].name;
 		}
 	}
@@ -89,7 +90,7 @@ int writeServerBroadcast(Message answer)
 }
 void returnGameStatus(LPVOID param, Message answer) {
 	answer.code = gameStatus;
-	sendMsgLogger(getClientName(param), answer.code);
+	sendMsgLogger(param, answer.code);
 	writeClientResponse(param, answer);
 }
 
@@ -131,6 +132,9 @@ void ProcessClientMessage(LPVOID param, Message request, Message answer) {
 		break;
 	case R_CHECK_GAME_STATUS:
 		returnGameStatus(param, answer);
+		break;
+	case R_CREATEGAME:
+		
 		break;
 	case R_LOGOUT:
 		disconnectClient(param, answer);
@@ -184,6 +188,7 @@ DWORD WINAPI InstanceThread(LPVOID param)
 			if (GetLastError() == ERROR_BROKEN_PIPE)
 			{
 				_tprintf(TEXT("InstanceThread: client disconnected.\n"), GetLastError());
+				cleanClientHandles(param);
 			}
 			else
 			{
