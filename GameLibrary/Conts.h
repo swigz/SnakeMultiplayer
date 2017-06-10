@@ -2,12 +2,30 @@
 #define NAMESIZE 256
 #define MAX_PLAYERS 8
 #define BUFSIZE 2048
-
+#define SNAKE_SPEED 100
 
 //DEFINES DE OBJECTOS E MAPAS
 #define WALL 101
 #define BLANK 100
 #define TP_WALL 102
+#define DURATION 60
+#define FOOD 103
+#define ICE 105
+#define GRENADE 106
+#define VODKA 107
+#define OIL 108
+#define GLUE 109
+#define O_VODKA 110
+#define O_OIL 111
+#define O_GLUE 112
+
+#define SNAKE 104
+
+#define MAX_OBJECTS 8
+
+#define MAP_ROWS					20
+#define MAP_COLUMNS					20
+#define MAP_SIZE					20
 
 
 //butoes e afins
@@ -19,6 +37,10 @@
 #define JOIN_GAME_BUTTON 405
 #define GAMEMENU_BACK_BUTTON 406
 #define REFRESH_STATUS_BUTTON 407
+#define UP 610
+#define DOWN 611
+#define RIGHT 612
+#define LEFT  613 
 
 //responses comando do cliente
 #pragma once

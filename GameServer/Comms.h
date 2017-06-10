@@ -101,7 +101,7 @@ void disconnectClient(LPVOID param, Message answer) {
 		if (pl[i].hPipe == param) {
 			sendMsgLogger(pl[i].name, answer.code);
 			writeClientResponse(pl[i].hPipe, answer);
-			pl[i] = { 0 };
+			
 			pl[i].hPipe = NULL;
 			pl[i].status = DISCONNECTED;
 		}
