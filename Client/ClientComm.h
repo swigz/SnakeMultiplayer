@@ -101,6 +101,29 @@ void writeClientRequest(HWND hWnd, Message request) {
 	}
 }
 
+void sendGameParameters(HWND hWnd) {
+	Message request;
+	TCHAR str[NAMESIZE];
+
+
+	request.game.bots = TRUE;
+	request.playerNumber = 1;
+	_tcscpy(request.player2Name, TEXT("unknown"));
+	if (IsDlgButtonChecked(hWnd, IDC_CHECK2)) {
+		GetDlgItemText(hWnd, IDC_EDIT1, request.player2Name, NAMESIZE);
+		request.playerNumber = 2;
+	}
+	if (IsDlgButtonChecked(hWnd, IDC_CHECK3)) {
+		request.game.bots = FALSE;
+	}
+	GetDlgItemText(hWnd, IDC_EDIT2, str, NAMESIZE);
+	request.game.maxPlayers = _wtoi(str);
+	GetDlgItemText(hWnd, IDC_EDIT3, str, NAMESIZE);
+	request.game.bots = _wtoi(str);
+
+	writeClientRequest(hWnd, request);
+}
+
 void sendRequest(HWND hWnd, int command) {
 	int dim;
 	TCHAR str[NAMESIZE];
@@ -129,9 +152,8 @@ int connectToServer(HWND hWnd) {
 
 		if (GetLastError() != ERROR_PIPE_BUSY)
 		{
-			_stprintf(str, TEXT("CreateFile failed. Error: %d"), GetLastError());
+			_stprintf(str, TEXT("No servers are online..."));
 			MessageBox(hWnd, str, TEXT("Error"), MB_ICONERROR);
-			DestroyWindow(hWnd);
 		}
 
 		// Exit if an error other than ERROR_PIPE_BUSY occurs. 

@@ -142,9 +142,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\..\..\..\Downloads\SnakeMultiplayer-master1\SnakeMultiplayer-master1\Client\resource1.h" />
     <ClInclude Include="ClientComm.h" />
     <ClInclude Include="Resource.h" />
-    <ClInclude Include="resource1.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp" />
@@ -153,10 +153,11 @@
     <Library Include="..\Debug\GameLibrary.lib" />
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="Client.rc" />
+    <ResourceCompile Include="..\..\..\..\..\Downloads\SnakeMultiplayer-master1\SnakeMultiplayer-master1\Client\Client.rc" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="bitmap1.bmp" />
+    <Image Include="..\..\..\..\..\Downloads\SnakeMultiplayer-master1\SnakeMultiplayer-master1\Client\bitmap1.bmp" />
+    <Image Include="..\..\..\..\..\Downloads\SnakeMultiplayer-master1\SnakeMultiplayer-master1\Client\icon1.ico" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

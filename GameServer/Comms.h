@@ -2,10 +2,10 @@
 #include "..\GameLibrary\GameLib.h";
 #include "resource.h"
 int ConnectedClients=0;
-players pl[MAX_PLAYERS];
 HANDLE hPipe = INVALID_HANDLE_VALUE, hThread = NULL, hMutex, canWrite;
 LPTSTR pipename = TEXT("\\\\.\\pipe\\pipename");
 int gameStatus = SERVER_NO_GAME_RUNNING;
+
 
 int writeClientResponse(HANDLE hPipe, Message answer)
 {
@@ -29,8 +29,8 @@ int writeClientResponse(HANDLE hPipe, Message answer)
 
 TCHAR* getClientName(LPVOID param) {
 	for (short int i = 0; i < MAX_PLAYERS; i++) {
-		if (pl[i].hPipe == param) {
-			return pl[i].name;
+		if (players[i].hPipe == param) {
+			return players[i].name;
 		}
 	}
 	return TEXT("");
@@ -42,7 +42,7 @@ void sendMsgLogger(LPVOID param, int code) {
 BOOL usernameExists(TCHAR* name) {
 	for (int i = 0; i < MAX_PLAYERS; i++)
 	{
-		if (pl[i].hPipe != NULL && _tcscmp(name, pl[i].name) == 0)
+		if (players[i].hPipe != NULL && _tcscmp(name, players[i].name) == 0)
 			return TRUE;
 	}
 	return FALSE;
@@ -52,13 +52,12 @@ void login(LPVOID param, TCHAR* name, Message answer) {
 
 	if (!usernameExists(name)) {
 		for (int i = 0; i < MAX_PLAYERS; i++) {
-			if (pl[i].hPipe == NULL) {
-				_tcscpy(pl[i].name, name);
-				pl[i].hPipe = param;
-				pl[i].status = LOGGED_IN;
+			if (players[i].hPipe == NULL) {
+				_tcscpy(players[i].name, name);
+				players[i].hPipe = param;
 				answer.code = SERVER_LOGIN_SUCCESS;
 				sendMsgLogger(param, answer.code);
-				writeClientResponse(pl[i].hPipe, answer);
+				writeClientResponse(players[i].hPipe, answer);
 				return;
 			}
 		}
@@ -84,8 +83,8 @@ int writeServerBroadcast(Message answer)
 	int num = 0;
 
 	for (int i = 0; i < MAX_PLAYERS; i++)
-		if (pl[i].hPipe != NULL)
-			num += writeClientResponse(pl[i].hPipe, answer);
+		if (players[i].hPipe != NULL)
+			num += writeClientResponse(players[i].hPipe, answer);
 	return num;
 }
 void returnGameStatus(LPVOID param, Message answer) {
@@ -98,12 +97,10 @@ void disconnectClient(LPVOID param, Message answer) {
 	//remove da lista
 	answer.code = SERVER_DISCONNECT;
 	for (int i = 0; i < MAX_PLAYERS; i++) {
-		if (pl[i].hPipe == param) {
-			sendMsgLogger(pl[i].name, answer.code);
-			writeClientResponse(pl[i].hPipe, answer);
-			
-			pl[i].hPipe = NULL;
-			pl[i].status = DISCONNECTED;
+		if (players[i].hPipe == param) {
+			sendMsgLogger(players[i].name, answer.code);
+			writeClientResponse(players[i].hPipe, answer);
+			players[i].hPipe = NULL;
 		}
 	}
 	cleanClientHandles(param);
@@ -111,18 +108,46 @@ void disconnectClient(LPVOID param, Message answer) {
 }
 
 
-//
-//
-//switch (gameStatus) {
-//case SERVER_GAME_ACCEPTING:
-//	break;
-//case SERVER_NO_GAME_RUNNING:
-//	break;
-//case SERVER_GAME_IS_RUNNING:
-//	break;
-//default:
-//	break;
-//}
+void initClient(int i) {
+	players[i].score = 0;
+	players[i].speed = SNAKE_SPEED;
+	//fazer o resto
+}
+
+void joinGameLobby(LPVOID param, Message request, Message answer) {
+	for (short int i = 0; i < MAX_PLAYERS; i++) {
+		if (players[i].hPipe == param) {
+			players[i].inGame = TRUE;
+		}
+
+	}
+	ConnectedClients++;
+	answer.code = SERVER_GAME_JOIN_SUCCESS;
+	writeClientResponse(param, answer);
+	answer.code = BR_GAME_CREATED;
+	int br = writeServerBroadcast(answer);
+	_tprintf(TEXT("Enviados %d broadcasts..."), br);
+}
+
+void createGameLobby(LPVOID param, Message request, Message answer) {
+	g.maxPlayers = request.game.maxPlayers;
+	g.bots = request.game.bots;
+	g.open = TRUE;
+	g.running = FALSE;
+	
+
+	for (short int i = 0; i < MAX_PLAYERS; i++) {
+		if (players[i].hPipe == param) {
+			if (request.playerNumber == 2) {
+				players[i].isMulti = TRUE;
+			}
+			//initClient(i);
+		}
+	}
+	ConnectedClients++;
+	answer.code = SERVER_GAME_CREATE_SUCCESS;
+	writeClientResponse(param, answer);
+}
 
 void ProcessClientMessage(LPVOID param, Message request, Message answer) {
 	_tprintf(TEXT("[SERVER] Received command from: %s, --- Command: %d\n"), request.name, request.code);
@@ -134,7 +159,14 @@ void ProcessClientMessage(LPVOID param, Message request, Message answer) {
 		returnGameStatus(param, answer);
 		break;
 	case R_CREATEGAME:
-		
+		gameStatus = SERVER_GAME_ACCEPTING;
+		createGameLobby(param, request, answer);
+		break;
+		break;
+	case R_JOINGAME:
+		if (gameStatus == SERVER_GAME_ACCEPTING) {
+			joinGameLobby(param, request, answer);
+		}
 		break;
 	case R_LOGOUT:
 		disconnectClient(param, answer);

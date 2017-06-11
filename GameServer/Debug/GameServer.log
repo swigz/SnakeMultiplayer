@@ -1,18 +1,18 @@
 ﻿  GameServer.cpp
-c:\users\alexandre\desktop\snakemultiplayer-master1\gameserver\comms.h(2): warning C4067: unexpected tokens following preprocessor directive - expected a newline
-c:\users\alexandre\desktop\snakemultiplayer-master1\gamelibrary\gamelib.h(69): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
-c:\users\alexandre\desktop\snakemultiplayer-master1\gamelibrary\gamelib.h(83): warning C4101: 'fInit': unreferenced local variable
-c:\users\alexandre\desktop\snakemultiplayer-master1\gamelibrary\gamelib.h(83): warning C4101: 'fIgnore': unreferenced local variable
-c:\users\alexandre\desktop\snakemultiplayer-master1\gamelibrary\gamelib.h(110): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
-c:\users\alexandre\desktop\snakemultiplayer-master1\gamelibrary\gamelib.h(99): warning C4101: 'y': unreferenced local variable
-c:\users\alexandre\desktop\snakemultiplayer-master1\gamelibrary\gamelib.h(99): warning C4101: 'x': unreferenced local variable
-c:\users\alexandre\desktop\snakemultiplayer-master1\gamelibrary\gamelib.h(125): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
-c:\users\alexandre\desktop\snakemultiplayer-master1\gamelibrary\gamelib.h(232): warning C4101: 'y': unreferenced local variable
-c:\users\alexandre\desktop\snakemultiplayer-master1\gamelibrary\gamelib.h(232): warning C4101: 'x': unreferenced local variable
-c:\users\alexandre\desktop\snakemultiplayer-master1\gameserver\comms.h(56): warning C4996: 'wcscpy': This function or variable may be unsafe. Consider using wcscpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+c:\users\daniel\documents\visual studio 2015\projects\tp_so2_v4\gameserver\comms.h(2): warning C4067: unexpected tokens following preprocessor directive - expected a newline
+c:\users\daniel\documents\visual studio 2015\projects\tp_so2_v4\gamelibrary\gamelib.h(240): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
+c:\users\daniel\documents\visual studio 2015\projects\tp_so2_v4\gamelibrary\gamelib.h(275): warning C4101: 'fInit': unreferenced local variable
+c:\users\daniel\documents\visual studio 2015\projects\tp_so2_v4\gamelibrary\gamelib.h(275): warning C4101: 'fIgnore': unreferenced local variable
+c:\users\daniel\documents\visual studio 2015\projects\tp_so2_v4\gamelibrary\gamelib.h(301): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
+c:\users\daniel\documents\visual studio 2015\projects\tp_so2_v4\gamelibrary\gamelib.h(291): warning C4101: 'y': unreferenced local variable
+c:\users\daniel\documents\visual studio 2015\projects\tp_so2_v4\gamelibrary\gamelib.h(291): warning C4101: 'x': unreferenced local variable
+c:\users\daniel\documents\visual studio 2015\projects\tp_so2_v4\gamelibrary\gamelib.h(316): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
+c:\users\daniel\documents\visual studio 2015\projects\tp_so2_v4\gamelibrary\gamelib.h(456): warning C4101: 'y': unreferenced local variable
+c:\users\daniel\documents\visual studio 2015\projects\tp_so2_v4\gamelibrary\gamelib.h(456): warning C4101: 'x': unreferenced local variable
+c:\users\daniel\documents\visual studio 2015\projects\tp_so2_v4\gameserver\comms.h(56): warning C4996: 'wcscpy': This function or variable may be unsafe. Consider using wcscpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
   c:\program files (x86)\windows kits\10\include\10.0.10240.0\ucrt\corecrt_wstring.h(121): note: see declaration of 'wcscpy'
-c:\users\alexandre\desktop\snakemultiplayer-master1\gameserver\comms.h(142): warning C4102: 'defaul': unreferenced label
-c:\users\alexandre\desktop\snakemultiplayer-master1\gameserver\comms.h(190): warning C4474: 'wprintf' : too many arguments passed for format string
-  c:\users\alexandre\desktop\snakemultiplayer-master1\gameserver\comms.h(190): note: placeholders and their parameters expect 0 variadic arguments, but 1 were provided
-  GameServer.vcxproj -> C:\Users\Alexandre\Desktop\SnakeMultiplayer-master1\Debug\GameServer.exe
-  GameServer.vcxproj -> C:\Users\Alexandre\Desktop\SnakeMultiplayer-master1\Debug\GameServer.pdb (Full PDB)
+c:\users\daniel\documents\visual studio 2015\projects\tp_so2_v4\gameserver\comms.h(142): warning C4102: 'defaul': unreferenced label
+c:\users\daniel\documents\visual studio 2015\projects\tp_so2_v4\gameserver\comms.h(190): warning C4474: 'wprintf' : too many arguments passed for format string
+  c:\users\daniel\documents\visual studio 2015\projects\tp_so2_v4\gameserver\comms.h(190): note: placeholders and their parameters expect 0 variadic arguments, but 1 were provided
+  GameServer.vcxproj -> C:\Users\Daniel\documents\visual studio 2015\Projects\TP_SO2_V4\Debug\GameServer.exe
+  GameServer.vcxproj -> C:\Users\Daniel\documents\visual studio 2015\Projects\TP_SO2_V4\Debug\GameServer.pdb (Full PDB)

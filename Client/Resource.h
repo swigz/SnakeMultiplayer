@@ -19,3 +19,4 @@ void showMultipleElement(HWND hWnd[], UINT dim);
 void showInitialMenu(HWND hWnd);
 void showMainMenu(HWND hWnd);
 BOOL CALLBACK createGameDialogProc(HWND hWnd, UINT messg, WPARAM wParam, LPARAM lParam);
+void sendGameParameters(HWND hWnd);

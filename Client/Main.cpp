@@ -137,13 +137,16 @@ void buttonClickEvent(HWND hWnd, WPARAM wParam) {
 	int nameLength = 0;
 	switch (LOWORD(wParam)) {
 	case LOGIN_BUTTON:
+		if (clientStatus == SERVERS_OFFLINE) {
+			if (connectToServer(hWnd) == -1) {
+				MessageBox(hWnd, TEXT("No servers are online at the time."), TEXT("Error"), MB_ICONEXCLAMATION);
+				break;
+			}
+		}
 		nameLength = GetWindowTextLength(initialMenu[1]) + 1;
 		if (nameLength <= 1) {
 			MessageBox(hWnd, TEXT("Please type a name"), TEXT("Error"), MB_ICONERROR);
 			break;
-		}
-		if (connectToServer(hWnd) == -1) {
-			MessageBox(hWnd, TEXT("No servers are online."), TEXT("Error"), MB_ICONERROR);
 		}
 		GetWindowText(initialMenu[1], username, nameLength);
 		sendRequest(hWnd, R_CONNECT);
@@ -164,6 +167,13 @@ void buttonClickEvent(HWND hWnd, WPARAM wParam) {
 	case REFRESH_STATUS_BUTTON:
 		sendRequest(hWnd, R_CHECK_GAME_STATUS);
 		MessageBox(hWnd, TEXT("Server Status refreshed!"), TEXT("YAY!"), MB_ICONEXCLAMATION);
+		break;
+	case GAMEMENU_BACK_BUTTON:
+		for (short int i = 0; i < GAME_MENU_SIZE; i++) {
+			hideSingleElement(gameMenu[i]);
+		}
+		clientStatus = LOGGED_IN;
+		InvalidateRect(hWnd, NULL, 1);
 		break;
 	case LOGOUT_BUTTON:
 		sendRequest(hWnd, R_LOGOUT);
@@ -214,7 +224,7 @@ BOOL CALLBACK createGameDialogProc(HWND hWnd, UINT messg, WPARAM wParam, LPARAM 
 	case WM_COMMAND:
 		switch (LOWORD(wParam)) {
 		case IDOK:
-			
+			sendGameParameters(hWnd);
 			EndDialog(hWnd, 0);
 			break;
 		case IDCANCEL:
@@ -234,10 +244,8 @@ LRESULT CALLBACK MainEvent(HWND hWnd, UINT messg, WPARAM wParam, LPARAM lParam) 
 
 	switch (messg) {
 	case WM_CREATE:
-		if (connectToServer(hWnd) == -1) {
-			//MessageBox(hWnd, TEXT("No servers are online at the time."), TEXT("Error"), MB_ICONEXCLAMATION);
-			//clientStatus = SERVERS_OFFLINE;
-		}
+		if (connectToServer(hWnd) == -1) 
+			clientStatus = SERVERS_OFFLINE;
 		SetupInitialMenu(hWnd);
 		setupMainMenu(hWnd);
 		setupGameMenu(hWnd);
