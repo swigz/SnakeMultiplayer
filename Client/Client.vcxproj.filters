@@ -44,6 +44,9 @@
     <Image Include="..\..\..\..\..\Downloads\SnakeMultiplayer-master1\SnakeMultiplayer-master1\Client\bitmap1.bmp">
       <Filter>Resource Files</Filter>
     </Image>
+    <Image Include="GUI\blank.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
     <Image Include="..\..\..\..\..\Downloads\SnakeMultiplayer-master1\SnakeMultiplayer-master1\Client\icon1.ico">
       <Filter>Resource Files</Filter>
     </Image>

@@ -10,6 +10,7 @@
 #include "Conts.h"
 #include <conio.h>
 
+
 typedef struct Cell {
 	int type;
 }Cell;
@@ -60,7 +61,7 @@ typedef struct Message {
 #endif
 static LPVOID lpvMem = NULL;      // pointer to shared memory
 static HANDLE hMapObject = NULL;  // handle to file mapping
-
+jogadores players[MAX_PLAYERS];
 game g;
 //BOOL gameOver;
 int Njogadores = MAX_PLAYERS;
@@ -493,68 +494,67 @@ void  draw() {
 
 }
 
-void input() {
-	if (_kbhit()) {
-		switch (_getch())
-		{
-		case 'a':
-			if (g.p[0].direction != RIGHT)
-				if(g.p[0].drunk)
-					g.p[0].direction = RIGHT;
-				else
-				g.p[0].direction = LEFT;
-
-			break;
-		case 'w':
-			if (g.p[0].direction != DOWN)
-				if (g.p[0].drunk)
-				g.p[0].direction = DOWN;
-				else
-					g.p[0].direction = UP;
-			break;
-		case 's':
-			if (g.p[0].direction != UP)
-				if (g.p[0].drunk)
-				g.p[0].direction = UP;
-				else
-				g.p[0].direction = DOWN;
-			break;
-		case 'd':
-			if (g.p[0].direction != LEFT)
-				if (g.p[0].drunk)
-					g.p[0].direction = LEFT;
-				else
-				g.p[0].direction = RIGHT;
-			break;
-
-		case 'j':
-			if (g.p[1].direction != RIGHT)
-				g.p[1].direction = LEFT;
-
-			break;
-		case 'i':
-			if (g.p[1].direction != DOWN)
-				g.p[1].direction = UP;
-			break;
-		case 'k':
-			if (g.p[1].direction != UP)
-				g.p[1].direction = DOWN;
-			break;
-		case 'l':
-			if (g.p[1].direction != LEFT)
-				g.p[1].direction = RIGHT;
-			break;
-		default:
-			break;
-		}
-	}
-
-}
+//void input() {
+//	if (_kbhit()) {
+//		switch (_getch())
+//		{
+//		case 'a':
+//			if (g.p[0].direction != RIGHT)
+//				if(g.p[0].drunk)
+//					g.p[0].direction = RIGHT;
+//				else
+//				g.p[0].direction = LEFT;
+//
+//			break;
+//		case 'w':
+//			if (g.p[0].direction != DOWN)
+//				if (g.p[0].drunk)
+//				g.p[0].direction = DOWN;
+//				else
+//					g.p[0].direction = UP;
+//			break;
+//		case 's':
+//			if (g.p[0].direction != UP)
+//				if (g.p[0].drunk)
+//				g.p[0].direction = UP;
+//				else
+//				g.p[0].direction = DOWN;
+//			break;
+//		case 'd':
+//			if (g.p[0].direction != LEFT)
+//				if (g.p[0].drunk)
+//					g.p[0].direction = LEFT;
+//				else
+//				g.p[0].direction = RIGHT;
+//			break;
+//
+//		case 'j':
+//			if (g.p[1].direction != RIGHT)
+//				g.p[1].direction = LEFT;
+//
+//			break;
+//		case 'i':
+//			if (g.p[1].direction != DOWN)
+//				g.p[1].direction = UP;
+//			break;
+//		case 'k':
+//			if (g.p[1].direction != UP)
+//				g.p[1].direction = DOWN;
+//			break;
+//		case 'l':
+//			if (g.p[1].direction != LEFT)
+//				g.p[1].direction = RIGHT;
+//			break;
+//		default:
+//			break;
+//		}
+//	}
+//
+//}
 //Exportação
 extern "C"
 {
 
-	GAME_API jogadores players[MAX_PLAYERS];
 	GAME_API void Teste();
 }
 

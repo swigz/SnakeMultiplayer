@@ -30,6 +30,12 @@ void ProcessServerMessage(HWND hWnd, Message answer) {
 	case SERVER_DISCONNECT:
 		//exitApp();
 		break;
+	case SERVER_GAME_CREATE_SUCCESS:
+		clientStatus = INGAME_LOBBY;
+		break;
+	case BR_GAME_CREATED:
+		MessageBox(hWnd, TEXT("A game has been created!"), TEXT("INFO"), MB_ICONWARNING);
+		break;
 	default:
 		break;
 	}
@@ -104,14 +110,13 @@ void writeClientRequest(HWND hWnd, Message request) {
 void sendGameParameters(HWND hWnd) {
 	Message request;
 	TCHAR str[NAMESIZE];
-
-
 	request.game.bots = TRUE;
 	request.playerNumber = 1;
-	_tcscpy(request.player2Name, TEXT("unknown"));
+	
 	if (IsDlgButtonChecked(hWnd, IDC_CHECK2)) {
 		GetDlgItemText(hWnd, IDC_EDIT1, request.player2Name, NAMESIZE);
 		request.playerNumber = 2;
+		_tcscpy(request.player2Name, TEXT("unknown"));
 	}
 	if (IsDlgButtonChecked(hWnd, IDC_CHECK3)) {
 		request.game.bots = FALSE;
@@ -121,6 +126,7 @@ void sendGameParameters(HWND hWnd) {
 	GetDlgItemText(hWnd, IDC_EDIT3, str, NAMESIZE);
 	request.game.bots = _wtoi(str);
 
+	request.code = R_CREATEGAME;
 	writeClientRequest(hWnd, request);
 }
 

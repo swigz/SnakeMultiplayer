@@ -4,6 +4,7 @@ TCHAR *szProgName = TEXT("Base");
 HWND initialMenu[3];
 HWND mainMenu[4];
 HWND gameMenu[5];
+HWND lobbyMenu[1];
 
 int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, int nCmdShow) {
 	
@@ -97,6 +98,13 @@ void showMainMenu(HWND hWnd) {
 	showMultipleElement(mainMenu, MAIN_MENU_SIZE);
 }
 
+void showLobbyMenu(HWND hWnd) {
+	for (short int i = 0; i < GAME_MENU_SIZE; i++) {
+		hideSingleElement(gameMenu[i]);
+	}
+	showSingleElement(lobbyMenu[0]);
+}
+
 //CREATE MENU BUTTONS
 
 void setupMainMenu(HWND hWnd) {
@@ -118,6 +126,9 @@ void setupGameMenu(HWND hWnd){
 	gameMenu[2] = CreateWindow(TEXT("BUTTON"), TEXT("Create Game"), WS_CHILD, 450, 200, 150, 25, hWnd, (HMENU)CREATE_GAME_BUTTON, NULL, NULL);
 	gameMenu[3] = CreateWindow(TEXT("BUTTON"), TEXT("Refresh server Status"), WS_CHILD, 450, 225, 150, 25, hWnd, (HMENU)REFRESH_STATUS_BUTTON, NULL, NULL);
 	gameMenu[4] = CreateWindow(TEXT("BUTTON"), TEXT("Back"), WS_CHILD, 450, 250, 150, 25, hWnd, (HMENU)GAMEMENU_BACK_BUTTON, NULL, NULL);
+}
+void setupLobbyMenu(HWND hWnd) {
+	lobbyMenu[0] = CreateWindow(TEXT("BUTTON"), TEXT("Start"), WS_CHILD, 450, 200, 150, 25, hWnd, (HMENU)LOBBYMENU_START_BUTTON, NULL, NULL);
 }
 
 void createGameDialog(HWND hWnd) {
@@ -249,6 +260,7 @@ LRESULT CALLBACK MainEvent(HWND hWnd, UINT messg, WPARAM wParam, LPARAM lParam) 
 		SetupInitialMenu(hWnd);
 		setupMainMenu(hWnd);
 		setupGameMenu(hWnd);
+		setupLobbyMenu(hWnd);
 		InvalidateRect(hWnd, NULL, 1);
 		break;
 	case WM_COMMAND:
@@ -269,6 +281,9 @@ LRESULT CALLBACK MainEvent(HWND hWnd, UINT messg, WPARAM wParam, LPARAM lParam) 
 			break;
 		case INGAME_MENU:
 			showGameMenu(hWnd);
+			break;
+		case INGAME_LOBBY:
+			showLobbyMenu(hWnd);
 			break;
 		default:
 			break;
