@@ -56,7 +56,6 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, int nC
 }
 
 //HIDE AND SHOW ELEMENTS AND MENUS
-
 void hideSingleElement(HWND hWnd)
 {
 	if (IsWindowVisible(hWnd))
@@ -105,6 +104,13 @@ void showLobbyMenu(HWND hWnd) {
 	showSingleElement(lobbyMenu[0]);
 }
 
+void showInGameScreen(HWND hWnd, HDC hDC, PAINTSTRUCT pt) {
+	hideSingleElement(lobbyMenu[0]);
+	drawMap(hWnd, hDC, pt);
+
+}
+
+
 //CREATE MENU BUTTONS
 
 void setupMainMenu(HWND hWnd) {
@@ -139,7 +145,6 @@ void createGameDialog(HWND hWnd) {
 void exitApp(HWND hWnd) {
 	DestroyWindow(hWnd);
 }
-
 
 
 //WINDOWS EVENTS
@@ -189,6 +194,12 @@ void buttonClickEvent(HWND hWnd, WPARAM wParam) {
 	case LOGOUT_BUTTON:
 		sendRequest(hWnd, R_LOGOUT);
 		break;
+	case JOIN_GAME_BUTTON:
+		sendRequest(hWnd, R_JOINGAME);
+		break;
+	case LOBBYMENU_START_BUTTON:
+		sendRequest(hWnd, R_STARTGAME);
+		break;
 	default:
 		break;
 	}
@@ -227,6 +238,8 @@ void keyboardPressed(HWND hWnd, WPARAM param) {
 	}
 	
 }
+
+
 BOOL CALLBACK createGameDialogProc(HWND hWnd, UINT messg, WPARAM wParam, LPARAM lParam) {
 	TCHAR str[NAMESIZE];
 	switch (messg) {
@@ -284,6 +297,9 @@ LRESULT CALLBACK MainEvent(HWND hWnd, UINT messg, WPARAM wParam, LPARAM lParam) 
 			break;
 		case INGAME_LOBBY:
 			showLobbyMenu(hWnd);
+			break;
+		case PLAYING:
+			showInGameScreen(hWnd, hDC, pt);
 			break;
 		default:
 			break;

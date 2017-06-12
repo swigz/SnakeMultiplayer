@@ -4,7 +4,7 @@ HANDLE hPipe, canWrite;
 BOOL fSuccess = FALSE;
 DWORD  cbRead, cbToWrite, cbWritten, dwMode;
 LPTSTR pipename = TEXT("\\\\.\\pipe\\pipename");
-TCHAR username[256];
+TCHAR username[NAMESIZE];
 int clientStatus;
 int gameStatus;
 
@@ -30,11 +30,16 @@ void ProcessServerMessage(HWND hWnd, Message answer) {
 	case SERVER_DISCONNECT:
 		//exitApp();
 		break;
+	case SERVER_GAME_JOIN_SUCCESS:
 	case SERVER_GAME_CREATE_SUCCESS:
 		clientStatus = INGAME_LOBBY;
 		break;
 	case BR_GAME_CREATED:
 		MessageBox(hWnd, TEXT("A game has been created!"), TEXT("INFO"), MB_ICONWARNING);
+		break;
+	case SERVER_GAME_STARTED:
+		clientStatus = PLAYING;
+
 		break;
 	default:
 		break;

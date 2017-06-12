@@ -1,10 +1,13 @@
 #pragma once
 #include "..\GameLibrary\GameLib.h";
 #include "resource.h"
+
 int ConnectedClients=0;
 HANDLE hPipe = INVALID_HANDLE_VALUE, hThread = NULL, hMutex, canWrite;
 LPTSTR pipename = TEXT("\\\\.\\pipe\\pipename");
 int gameStatus = SERVER_NO_GAME_RUNNING;
+
+
 
 
 int writeClientResponse(HANDLE hPipe, Message answer)
@@ -119,14 +122,12 @@ void joinGameLobby(LPVOID param, Message request, Message answer) {
 		if (players[i].hPipe == param) {
 			players[i].inGame = TRUE;
 		}
-
 	}
 	ConnectedClients++;
 	answer.code = SERVER_GAME_JOIN_SUCCESS;
 	writeClientResponse(param, answer);
-	answer.code = BR_GAME_CREATED;
-	int br = writeServerBroadcast(answer);
-	_tprintf(TEXT("Enviados %d broadcasts..."), br);
+	answer.code = BR_PLAYER_JOINED;
+	writeServerBroadcast(answer);
 }
 
 void createGameLobby(LPVOID param, Message request, Message answer) {
@@ -134,20 +135,26 @@ void createGameLobby(LPVOID param, Message request, Message answer) {
 	g.bots = request.game.bots;
 	g.open = TRUE;
 	g.running = FALSE;
-	
 
 	for (short int i = 0; i < MAX_PLAYERS; i++) {
 		if (players[i].hPipe == param) {
+			
 			if (request.playerNumber == 2) {
 				players[i].isMulti = TRUE;
 			}
 			//initClient(i);
+			_tprintf(players[i].name);
 		}
 	}
 	ConnectedClients++;
 	answer.code = SERVER_GAME_CREATE_SUCCESS;
 	writeClientResponse(param, answer);
+	answer.code = BR_GAME_CREATED;
+	int br = writeServerBroadcast(answer);
+	_tprintf(TEXT("[SERVER] %d broadcasts sent..."), br);
 }
+
+
 
 void ProcessClientMessage(LPVOID param, Message request, Message answer) {
 	_tprintf(TEXT("[SERVER] Received command from: %s, --- Command: %d\n"), request.name, request.code);
@@ -162,7 +169,6 @@ void ProcessClientMessage(LPVOID param, Message request, Message answer) {
 		gameStatus = SERVER_GAME_ACCEPTING;
 		createGameLobby(param, request, answer);
 		break;
-		break;
 	case R_JOINGAME:
 		if (gameStatus == SERVER_GAME_ACCEPTING) {
 			joinGameLobby(param, request, answer);
@@ -171,6 +177,8 @@ void ProcessClientMessage(LPVOID param, Message request, Message answer) {
 	case R_LOGOUT:
 		disconnectClient(param, answer);
 		break;
+	case R_STARTGAME:
+
 	defaul:
 		break;
 	}

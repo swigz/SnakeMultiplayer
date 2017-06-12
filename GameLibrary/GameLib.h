@@ -314,7 +314,6 @@ void SnakesSetup() {
 
 	int x, y;
 
-
 	for (int i = 0; i < Njogadores; i++) {
 		srand(time(NULL));
 		x = rand() % MAP_COLUMNS - 2;

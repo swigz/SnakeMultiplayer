@@ -1,9 +1,16 @@
 ﻿  stdafx.cpp
   GameLibrary.cpp
-c:\users\daniel\documents\visual studio 2015\projects\tp_so2_v4\gamelibrary\gamelib.h(49): warning C4101: 'fInit': unreferenced local variable
-c:\users\daniel\documents\visual studio 2015\projects\tp_so2_v4\gamelibrary\gamelib.h(49): warning C4101: 'fIgnore': unreferenced local variable
+c:\users\daniel\documents\visual studio 2015\projects\tp_so2_v4\gamelibrary\gamelib.h(243): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
+c:\users\daniel\documents\visual studio 2015\projects\tp_so2_v4\gamelibrary\gamelib.h(278): warning C4101: 'fInit': unreferenced local variable
+c:\users\daniel\documents\visual studio 2015\projects\tp_so2_v4\gamelibrary\gamelib.h(278): warning C4101: 'fIgnore': unreferenced local variable
+c:\users\daniel\documents\visual studio 2015\projects\tp_so2_v4\gamelibrary\gamelib.h(304): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
+c:\users\daniel\documents\visual studio 2015\projects\tp_so2_v4\gamelibrary\gamelib.h(294): warning C4101: 'y': unreferenced local variable
+c:\users\daniel\documents\visual studio 2015\projects\tp_so2_v4\gamelibrary\gamelib.h(294): warning C4101: 'x': unreferenced local variable
+c:\users\daniel\documents\visual studio 2015\projects\tp_so2_v4\gamelibrary\gamelib.h(319): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
+c:\users\daniel\documents\visual studio 2015\projects\tp_so2_v4\gamelibrary\gamelib.h(459): warning C4101: 'y': unreferenced local variable
+c:\users\daniel\documents\visual studio 2015\projects\tp_so2_v4\gamelibrary\gamelib.h(459): warning C4101: 'x': unreferenced local variable
 c:\users\daniel\documents\visual studio 2015\projects\tp_so2_v4\gamelibrary\gamelibrary.cpp(8): warning C4273: 'Teste': inconsistent dll linkage
-  c:\users\daniel\documents\visual studio 2015\projects\tp_so2_v4\gamelibrary\gamelib.h(92): note: see previous definition of 'Teste'
+  c:\users\daniel\documents\visual studio 2015\projects\tp_so2_v4\gamelibrary\gamelib.h(558): note: see previous definition of 'Teste'
   Generating Code...
      Creating library C:\Users\Daniel\documents\visual studio 2015\Projects\TP_SO2_V4\Debug\GameLibrary.lib and object C:\Users\Daniel\documents\visual studio 2015\Projects\TP_SO2_V4\Debug\GameLibrary.exp
   GameLibrary.vcxproj -> C:\Users\Daniel\documents\visual studio 2015\Projects\TP_SO2_V4\Debug\GameLibrary.dll
