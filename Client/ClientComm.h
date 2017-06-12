@@ -1,5 +1,5 @@
 #include "Resource.h"
-#include "resource1.h"
+#include "resource2.h"
 
 HANDLE hPipe, canWrite;
 BOOL fSuccess = FALSE;
@@ -132,7 +132,7 @@ void sendGameParameters(HWND hWnd) {
 	request.game.maxPlayers = _wtoi(str);
 	GetDlgItemText(hWnd, IDC_EDIT3, str, NAMESIZE);
 	request.game.bots = _wtoi(str);
-	GetDlgItemText(hWnd, 1020, str, NAMESIZE);
+	GetDlgItemText(hWnd, IDC_EDIT4, str, NAMESIZE);
 	request.aux = _wtoi(str);
 
 	request.code = R_CREATEGAME;

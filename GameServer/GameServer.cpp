@@ -59,6 +59,6 @@ int _tmain(int argc, TCHAR *argv[])
 			CloseHandle(hPipe);
 	}
 	return 1;
-
+	
 }
 

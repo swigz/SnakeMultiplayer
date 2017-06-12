@@ -1,9 +1,9 @@
 #include "ClientComm.h"
 HINSTANCE hInstance;
 TCHAR *szProgName = TEXT("Base");
-HWND initialMenu[3];
-HWND mainMenu[4];
-HWND gameMenu[5];
+HWND initialMenu[INITIAL_MENU_SIZE];
+HWND mainMenu[MAIN_MENU_SIZE];
+HWND gameMenu[GAME_MENU_SIZE];
 HWND lobbyMenu[1];
 
 int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, int nCmdShow) {
@@ -81,41 +81,115 @@ void showMultipleElement(HWND hWnd[], UINT dim)
 
 void drawMap(HWND hWnd, HDC hDC, PAINTSTRUCT pt) {
 	HDC MemDC;
-	HBITMAP bm[26];
+	HBITMAP bm[28];
 	TCHAR error[100];
 	BOOL accessible;
 
-	bm[0] = LoadBitmap(GetModuleHandle(NULL), MAKEINTRESOURCE(IDB_BLANK));
-	bm[1] = LoadBitmap(GetModuleHandle(NULL), MAKEINTRESOURCE(IDB_FOOD));
-	bm[2] = LoadBitmap(GetModuleHandle(NULL), MAKEINTRESOURCE(IDB_DRUNK));
-	bm[3] = LoadBitmap(GetModuleHandle(NULL), MAKEINTRESOURCE(IDB_GLUE));
-	bm[4] = LoadBitmap(GetModuleHandle(NULL), MAKEINTRESOURCE(IDB_GRENADE));
-	bm[5] = LoadBitmap(GetModuleHandle(NULL), MAKEINTRESOURCE(IDB_ICE));
-	bm[6] = LoadBitmap(GetModuleHandle(NULL), MAKEINTRESOURCE(IDB_OIL));
-	bm[7] = LoadBitmap(GetModuleHandle(NULL), MAKEINTRESOURCE(IDB_O_GLUE));
-	bm[8] = LoadBitmap(GetModuleHandle(NULL), MAKEINTRESOURCE(IDB_O_OIL));
-	bm[9] = LoadBitmap(GetModuleHandle(NULL), MAKEINTRESOURCE(IDB_O_VODKA));
-	bm[10] = LoadBitmap(GetModuleHandle(NULL), MAKEINTRESOURCE(IDB_HEAD1));
-	bm[11] = LoadBitmap(GetModuleHandle(NULL), MAKEINTRESOURCE(IDB_HEAD2));
-	bm[12] = LoadBitmap(GetModuleHandle(NULL), MAKEINTRESOURCE(IDB_HEAD3));
-	bm[13] = LoadBitmap(GetModuleHandle(NULL), MAKEINTRESOURCE(IDB_HEAD4));
-	bm[14] = LoadBitmap(GetModuleHandle(NULL), MAKEINTRESOURCE(IDB_HEAD5));
-	bm[15] = LoadBitmap(GetModuleHandle(NULL), MAKEINTRESOURCE(IDB_HEAD6));
-	bm[16] = LoadBitmap(GetModuleHandle(NULL), MAKEINTRESOURCE(IDB_HEAD7));
-	bm[17] = LoadBitmap(GetModuleHandle(NULL), MAKEINTRESOURCE(IDB_HEAD8));
-	bm[18] = LoadBitmap(GetModuleHandle(NULL), MAKEINTRESOURCE(IDB_SNAKE1));
-	bm[19] = LoadBitmap(GetModuleHandle(NULL), MAKEINTRESOURCE(IDB_SNAKE2));
-	bm[20] = LoadBitmap(GetModuleHandle(NULL), MAKEINTRESOURCE(IDB_SNAKE3));
-	bm[21] = LoadBitmap(GetModuleHandle(NULL), MAKEINTRESOURCE(IDB_SNAKE4));
-	bm[22] = LoadBitmap(GetModuleHandle(NULL), MAKEINTRESOURCE(IDB_SNAKE5));
-	bm[23] = LoadBitmap(GetModuleHandle(NULL), MAKEINTRESOURCE(IDB_SNAKE6));
-	bm[24] = LoadBitmap(GetModuleHandle(NULL), MAKEINTRESOURCE(IDB_SNAKE7));
-	bm[25] = LoadBitmap(GetModuleHandle(NULL), MAKEINTRESOURCE(IDB_SNAKE8));
-	bm[26] = LoadBitmap(GetModuleHandle(NULL), MAKEINTRESOURCE(IDB_WALL));
-	bm[27] = LoadBitmap(GetModuleHandle(NULL), MAKEINTRESOURCE(IDB_VODKA));
+	bm[0] = LoadBitmap(GetModuleHandle(NULL), MAKEINTRESOURCE(IDB_BITMAP29)); //BLANK
+	bm[1] = LoadBitmap(GetModuleHandle(NULL), MAKEINTRESOURCE(IDB_BITMAP30)); //DRUNK
+	bm[2] = LoadBitmap(GetModuleHandle(NULL), MAKEINTRESOURCE(IDB_BITMAP31)); //FOOD
+	bm[3] = LoadBitmap(GetModuleHandle(NULL), MAKEINTRESOURCE(IDB_BITMAP32)); //GLUE
+	bm[4] = LoadBitmap(GetModuleHandle(NULL), MAKEINTRESOURCE(IDB_BITMAP33)); //GRENADE
+	bm[5] = LoadBitmap(GetModuleHandle(NULL), MAKEINTRESOURCE(IDB_BITMAP34)); //ICE
+	bm[6] = LoadBitmap(GetModuleHandle(NULL), MAKEINTRESOURCE(IDB_BITMAP35)); //O_GLUE
+	bm[7] = LoadBitmap(GetModuleHandle(NULL), MAKEINTRESOURCE(IDB_BITMAP36)); //O_OIL
+	bm[8] = LoadBitmap(GetModuleHandle(NULL), MAKEINTRESOURCE(IDB_BITMAP37)); //0_VODKA
+	bm[9] = LoadBitmap(GetModuleHandle(NULL), MAKEINTRESOURCE(IDB_BITMAP38)); //OIL
+	bm[10] = LoadBitmap(GetModuleHandle(NULL), MAKEINTRESOURCE(IDB_BITMAP39)); //S1
+	bm[11] = LoadBitmap(GetModuleHandle(NULL), MAKEINTRESOURCE(IDB_BITMAP40)); //S2
+	bm[12] = LoadBitmap(GetModuleHandle(NULL), MAKEINTRESOURCE(IDB_BITMAP41)); //S3
+	bm[13] = LoadBitmap(GetModuleHandle(NULL), MAKEINTRESOURCE(IDB_BITMAP42)); //S4
+	bm[14] = LoadBitmap(GetModuleHandle(NULL), MAKEINTRESOURCE(IDB_BITMAP43)); //S5
+	bm[15] = LoadBitmap(GetModuleHandle(NULL), MAKEINTRESOURCE(IDB_BITMAP44)); //S6
+	bm[16] = LoadBitmap(GetModuleHandle(NULL), MAKEINTRESOURCE(IDB_BITMAP45)); //S7
+	bm[17] = LoadBitmap(GetModuleHandle(NULL), MAKEINTRESOURCE(IDB_BITMAP46)); //S8
+	bm[18] = LoadBitmap(GetModuleHandle(NULL), MAKEINTRESOURCE(IDB_BITMAP47)); //SH1
+	bm[19] = LoadBitmap(GetModuleHandle(NULL), MAKEINTRESOURCE(IDB_BITMAP48)); //SH2
+	bm[20] = LoadBitmap(GetModuleHandle(NULL), MAKEINTRESOURCE(IDB_BITMAP49)); //SH3
+	bm[21] = LoadBitmap(GetModuleHandle(NULL), MAKEINTRESOURCE(IDB_BITMAP50)); //SH4
+	bm[22] = LoadBitmap(GetModuleHandle(NULL), MAKEINTRESOURCE(IDB_BITMAP51)); //SH5
+	bm[23] = LoadBitmap(GetModuleHandle(NULL), MAKEINTRESOURCE(IDB_BITMAP52)); //SH6
+	bm[24] = LoadBitmap(GetModuleHandle(NULL), MAKEINTRESOURCE(IDB_BITMAP53)); //SH7
+	bm[25] = LoadBitmap(GetModuleHandle(NULL), MAKEINTRESOURCE(IDB_BITMAP54)); //SH8
+	bm[26] = LoadBitmap(GetModuleHandle(NULL), MAKEINTRESOURCE(IDB_BITMAP55)); //VODKA
+	bm[27] = LoadBitmap(GetModuleHandle(NULL), MAKEINTRESOURCE(IDB_BITMAP56)); //WALL
 
+	for (short int i = 0; i < 28; i++)
+		if (bm[i] == NULL)
+		{
+			_stprintf(error, TEXT("Could not load IDB_BITMAP%d!"), i);
+			MessageBox(hWnd, error, TEXT("Error"), MB_OK | MB_ICONEXCLAMATION);
+			return;
+		}
+	MemDC = CreateCompatibleDC(hDC);
+	CriaMapaNormal();
+
+
+	for (int i = 0; i < MAP_ROWS; i++)
+	{
+		for (int j = 0; j < MAP_COLUMNS; j++) {
+			switch (g.board.cell[i][j].type) {
+			case WALL:
+				SelectObject(MemDC, bm[27]);
+				break;			
+			case BLANK:
+				SelectObject(MemDC, bm[0]);
+				break;
+			case FOOD:
+				SelectObject(MemDC, bm[2]);
+				break;
+			case GLUE:
+				SelectObject(MemDC, bm[3]);
+				break;
+			case GRENADE:
+				SelectObject(MemDC, bm[4]);
+				break;
+			case ICE:
+				SelectObject(MemDC, bm[5]);
+				break;
+			case VODKA:
+				SelectObject(MemDC, bm[26]);
+				break;
+			case O_GLUE:
+				SelectObject(MemDC, bm[6]);
+				break;
+			case O_OIL:
+				SelectObject(MemDC, bm[7]);
+				break;
+			case O_VODKA:
+				SelectObject(MemDC, bm[8]);
+				break;
+			case OIL:
+				SelectObject(MemDC, bm[9]);
+				break;
+			case SNAKEHEAD:
+				SelectObject(MemDC, bm[18+getPlayerId(i,j)]);
+				break;
+			case SNAKE:
+				SelectObject(MemDC, bm[10 + getPlayerId(i, j)]);
+				break;
+			}
+			StretchBlt(hDC, MAP_Y + ((j - 1)*IMG_SIZE + 50), MAP_X + ((i - 1)*IMG_SIZE + 25), 70, 70, MemDC, 0, 0, 35, 35, SRCCOPY);
+		}
 	
+		
+	}
+	
+	//// Restore the old bitmap
+	DeleteDC(MemDC);
+	for (short int i = 0; i < 28; i++)
+		DeleteObject(bm[i]);
+
+
+
 }
+
+
+void clearMap(HWND hWnd) {
+
+	ReleaseDC(hWnd, GetDC(hWnd));
+}
+
 
 
 
@@ -147,7 +221,7 @@ void showLobbyMenu(HWND hWnd) {
 
 void showInGameScreen(HWND hWnd, HDC hDC, PAINTSTRUCT pt) {
 	hideSingleElement(lobbyMenu[0]);
-	//drawMap(hWnd, hDC, pt);
+	drawMap(hWnd, hDC, pt);
 
 }
 
@@ -164,7 +238,9 @@ void setupMainMenu(HWND hWnd) {
 void SetupInitialMenu(HWND hWnd) {
 	initialMenu[0] = CreateWindow(TEXT("STATIC"), TEXT("Type your username"), WS_CHILD, 450, 150, 150, 25, hWnd, NULL, NULL, NULL);
 	initialMenu[1] = CreateWindow(TEXT("EDIT"), TEXT(""), WS_CHILD | WS_BORDER, 450, 175, 150, 25, hWnd, NULL, NULL, NULL);
-	initialMenu[2] = CreateWindow(TEXT("BUTTON"), TEXT("GO!"), WS_CHILD, 450, 200, 150, 25, hWnd, (HMENU) LOGIN_BUTTON, NULL, NULL);
+	initialMenu[2] = CreateWindow(TEXT("BUTTON"), TEXT("Connect Local"), WS_CHILD, 450, 200, 150, 25, hWnd, (HMENU) LOGIN_LOCAL_BUTTON, NULL, NULL);
+	initialMenu[3] = CreateWindow(TEXT("EDIT"), TEXT(""), WS_CHILD | WS_BORDER, 450, 250, 150, 25, hWnd, NULL, NULL, NULL);
+	initialMenu[4] = CreateWindow(TEXT("BUTTON"), TEXT("Connect Remote"), WS_CHILD, 450, 275, 150, 25, hWnd, (HMENU)LOGIN_REMOTE_BUTTON, NULL, NULL);
 }
 
 void setupGameMenu(HWND hWnd){
@@ -193,7 +269,7 @@ void exitApp(HWND hWnd) {
 void buttonClickEvent(HWND hWnd, WPARAM wParam) {
 	int nameLength = 0;
 	switch (LOWORD(wParam)) {
-	case LOGIN_BUTTON:
+	case LOGIN_LOCAL_BUTTON:
 		if (clientStatus == SERVERS_OFFLINE) {
 			if (connectToServer(hWnd) == -1) {
 				MessageBox(hWnd, TEXT("No servers are online at the time."), TEXT("Error"), MB_ICONEXCLAMATION);
@@ -239,7 +315,9 @@ void buttonClickEvent(HWND hWnd, WPARAM wParam) {
 		sendRequest(hWnd, R_JOINGAME);
 		break;
 	case LOBBYMENU_START_BUTTON:
-		sendRequest(hWnd, R_STARTGAME);
+		//sendRequest(hWnd, R_STARTGAME);
+		clientStatus = PLAYING;
+		InvalidateRect(hWnd, NULL, 1);
 		break;
 	default:
 		break;

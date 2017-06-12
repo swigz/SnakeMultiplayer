@@ -2,7 +2,7 @@
 #define SHMEMSIZE 4096 
 //status de jogo
 
-#define INITIAL_MENU_SIZE 3
+#define INITIAL_MENU_SIZE 5
 #define MAIN_MENU_SIZE 4
 #define GAME_MENU_SIZE 5
 

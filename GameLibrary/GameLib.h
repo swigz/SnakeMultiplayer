@@ -33,6 +33,7 @@ typedef struct Players {
 	int headY;
 	int tailX[100], tailY[100];
 	int ntail = 0;
+	int id;
 
 }jogadores;
 
@@ -55,6 +56,7 @@ typedef struct Message {
 }Message;
 
 
+
 #ifdef DLL_EXPORTS
 #define GAME_API __declspec(dllexport)
 #else
@@ -69,6 +71,22 @@ int Njogadores = MAX_PLAYERS;
 
 
 //OBJ EFEITOS
+
+int getPlayerId(int x, int y) {
+	for (int i = 0; i<MAX_PLAYERS; i++)
+		if (players[i].inGame)
+		{
+			if (players[i].headX == x && players[i].headY == y)
+				return players[i].id;
+			else {
+				for (int j = 0; j<players[i].ntail; j++)
+					if (players[i].tailX[j] == x && players[i].tailY[j] == y)
+						return players[i].id;
+			}
+		}
+
+
+}
 
 DWORD WINAPI DurationThread(DWORD i) {
 	Sleep(DURATION * 1000);
@@ -241,16 +259,15 @@ BOOL setgameOver() {
 
 }
 void randomObject() {
-	srand(time(NULL));
-	int x, y,prob;
-	x = rand() % MAP_COLUMNS - 2;
-	y = rand() % MAP_ROWS - 2;
+	time_t t;
+	int x=0, y=0,prob=0;
+	x = rand() % MAP_SIZE - 2;
+	y = rand() % MAP_SIZE - 2;
 	while (g.board.cell[x][y].type != BLANK) {
 		x = rand() % MAP_COLUMNS - 2;
 		y = rand() % MAP_ROWS - 2;
-
+		
 	}
-
 	prob = rand() % 99;
 	if(prob <=40)
 		g.board.cell[x][y].type = FOOD;
@@ -291,7 +308,7 @@ BOOL APIENTRY DllMain(HMODULE hModule,DWORD ul_reason_for_call, LPVOID lpReserve
 
 void CriaMapaNormal()
 {
-
+	int n=0;
 	int x, y;
 	for (short int i = 0; i < MAP_COLUMNS; i++)
 		for (short int j = 0; j < MAP_ROWS; j++)
@@ -300,13 +317,15 @@ void CriaMapaNormal()
 			else
 				g.board.cell[i][j].type = BLANK;
 
-	while (g.board.Objects < MAX_OBJECTS)
+
+	while (n < MAX_OBJECTS)
 	{
-		srand(time(NULL));
+		
 		randomObject();
-		g.board.Objects++;
+		n++;
 
 	}
+	
 
 }
 
@@ -327,7 +346,7 @@ void SnakesSetup() {
 
 		players[i].headX = x;
 		players[i].headY = y;
-		g.board.cell[x][y].type = SNAKE;
+		g.board.cell[x][y].type = SNAKEHEAD;
 
 	}
 }
@@ -430,7 +449,7 @@ void gameLogic() {
 
 			}
 			if (g.board.cell[players[c].headX][players[c].headY].type == SNAKE ||
-				g.board.cell[players[c].headX][players[c].headY].type == SNAKE) {
+				g.board.cell[players[c].headX][players[c].headY].type == SNAKEHEAD) {
 				_tprintf(TEXT("\nJOGADOR %d PERDEU\n"), c + 1);
 				players[c].isDead = TRUE;
 
@@ -438,9 +457,8 @@ void gameLogic() {
 
 
 
-			g.board.cell[players[c].headX][players[c].headY].type = SNAKE;
+			g.board.cell[players[c].headX][players[c].headY].type = SNAKEHEAD;
 
-			g.board.cell[players[c].headX][players[c].headY].type = SNAKE;
 			for (int i = 0; i < players[c].ntail; i++) {
 				g.board.cell[players[c].tailX[i]][players[c].tailY[i]].type = SNAKE;
 			}

@@ -3,9 +3,9 @@
 #define MAX_PLAYERS 8
 #define BUFSIZE 2048
 #define SNAKE_SPEED 100
-#define MAP_X 70
-#define MAP_Y 70
-#define IMG_SIZE 50
+#define MAP_X 0
+#define MAP_Y  0
+#define IMG_SIZE 35
 
 
 
@@ -24,9 +24,10 @@
 #define O_OIL 111
 #define O_GLUE 112
 
-#define SNAKE 104
+#define SNAKE 114
+#define SNAKEHEAD 115
 
-#define MAX_OBJECTS 8
+#define MAX_OBJECTS 20
 
 #define MAP_ROWS					20
 #define MAP_COLUMNS					20
@@ -34,7 +35,7 @@
 
 
 //butoes e afins
-#define LOGIN_BUTTON 400
+#define LOGIN_LOCAL_BUTTON 400
 #define HELP_BUTTON 401
 #define LOGOUT_BUTTON 402
 #define GAME_MENU_BUTTON 403
@@ -43,7 +44,7 @@
 #define GAMEMENU_BACK_BUTTON 406
 #define REFRESH_STATUS_BUTTON 407
 #define LOBBYMENU_START_BUTTON 408
-
+#define LOGIN_REMOTE_BUTTON 409
 
 
 #define UP 610
