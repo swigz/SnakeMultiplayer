@@ -1,6 +1,8 @@
 #pragma once
 #include <tchar.h>
-#include <windows.h> 
+
+#include <windows.h>
+#include <sddl.h>
 #include <memory.h> 
 #include <stdio.h>
 #include <stdlib.h>
@@ -67,7 +69,7 @@ static HANDLE hMapObject = NULL;  // handle to file mapping
 jogadores players[MAX_PLAYERS];
 game g;
 //BOOL gameOver;
-int Njogadores = MAX_PLAYERS;
+
 
 
 //OBJ EFEITOS
@@ -250,7 +252,7 @@ void O_VodkaEffect(int i) {
 
 BOOL setgameOver() {
 	
-	for (int i = 0; i < Njogadores; i++) {
+	for (int i = 0; i < MAX_PLAYERS; i++) {
 		if (players[i].isDead == FALSE)
 			return true;
 		
@@ -334,7 +336,7 @@ void SnakesSetup() {
 
 	int x, y;
 
-	for (int i = 0; i < Njogadores; i++) {
+	for (int i = 0; i < g.maxPlayers; i++) {
 		srand(time(NULL));
 		x = rand() % MAP_COLUMNS - 2;
 		y = rand() % MAP_ROWS - 2;
@@ -352,7 +354,7 @@ void SnakesSetup() {
 }
 void gameLogic() {
 
-	for (int c = 0; c < Njogadores; c++) {
+	for (int c = 0; c < MAX_PLAYERS; c++) {
 		if (players[c].isDead== FALSE) {
 			g.board.cell[players[c].headX][players[c].headY].type = BLANK;
 			g.board.cell[players[c].tailX[players[c].ntail - 1]][players[c].tailY[players[c].ntail - 1]].type = BLANK;
@@ -492,7 +494,7 @@ void  draw() {
 
 			case SNAKE:
 
-				for (int c = 0; c < Njogadores; c++) {
+				for (int c = 0; c < g.maxPlayers; c++) {
 					if (i == players[c].headX && j == players[c].headY)
 						_tprintf(TEXT("%d"), c + 1);
 					else

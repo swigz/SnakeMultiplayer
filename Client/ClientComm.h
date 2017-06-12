@@ -1,6 +1,6 @@
 #include "Resource.h"
 #include "resource2.h"
-
+LPTSTR pipename = TEXT("\\\\.\\pipe\\pipename");
 HANDLE hPipe, canWrite;
 BOOL fSuccess = FALSE;
 DWORD  cbRead, cbToWrite, cbWritten, dwMode;
@@ -155,10 +155,26 @@ void sendRequest(HWND hWnd, int command) {
 	writeClientRequest(hWnd, request);
 }
 
-int connectToServer(HWND hWnd) {
-	HANDLE hThread;
+int connectToServer(HWND hWnd, BOOL remote, TCHAR* domain) {
+	
+	LPTSTR remotePipe;
+	HANDLE hThread, hUserToken;
+	BOOL log;
+	TCHAR password[20];
 	DWORD dwMode, dwThreadId = 0;
-	TCHAR str[256];
+	TCHAR str[NAMESIZE];
+	TCHAR aux[20];
+	if (remote) {
+		_tcscpy(remotePipe,TEXT("\\\\"));
+		_tcscat(remotePipe, domain);
+		_tcscat(remotePipe, TEXT("\\pipe\\pipename"));
+		_tcscpy(username, TEXT("user1"));
+		_tcscpy(password, TEXT("boas"));
+
+
+		log = LogonUser(username, domain, password, LOGON32_LOGON_NEW_CREDENTIALS, LOGON32_PROVIDER_DEFAULT, &hUserToken);
+		log = ImpersonateLoggedOnUser(hUserToken);
+	}
 	while (1)
 	{
 		hPipe = CreateFile(pipename, GENERIC_READ | GENERIC_WRITE, 0 | FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, OPEN_EXISTING, 0 | FILE_FLAG_OVERLAPPED, NULL);

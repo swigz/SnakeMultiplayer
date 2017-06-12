@@ -2,6 +2,8 @@
 #include "..\GameLibrary\GameLib.h";
 #include "resource.h"
 
+
+
 int ConnectedClients=0;
 HANDLE hPipe = INVALID_HANDLE_VALUE, hThread = NULL, hMutex, canWrite;
 LPTSTR pipename = TEXT("\\\\.\\pipe\\pipename");
@@ -150,7 +152,34 @@ void createGameLobby(LPVOID param, Message request, Message answer) {
 	_tprintf(TEXT("[SERVER] %d broadcasts sent..."), br);
 }
 
+void processMovement(Message request, LPVOID param) {
 
+	for (short int i = 0; i < MAX_PLAYERS; i++) {
+		if (players[i].hPipe == param && players[i].inGame) {
+			switch (request.code)
+			{
+			case R_1_MOVEDOWN:
+				players[i].direction = DOWN;
+				break;
+			case R_1_MOVELEFT:
+				players[i].direction = LEFT;
+				break;
+			case R_1_MOVERIGHT:
+				players[i].direction = RIGHT;
+				break;
+			case R_1_MOVEUP:
+				players[i].direction = UP;
+				break;
+			default:
+				break;
+			}
+
+		}
+
+	}
+
+
+}
 
 void ProcessClientMessage(LPVOID param, Message request, Message answer) {
 	_tprintf(TEXT("[SERVER] Received command from: %s, --- Command: %d\n"), request.name, request.code);
@@ -174,7 +203,18 @@ void ProcessClientMessage(LPVOID param, Message request, Message answer) {
 		disconnectClient(param, answer);
 		break;
 	case R_STARTGAME:
-
+		break;
+	case R_1_MOVEDOWN:
+	case R_1_MOVELEFT:
+	case R_1_MOVERIGHT:
+	case R_1_MOVEUP:
+	case R_2_MOVEDOWN:
+	case R_2_MOVELEFT:
+	case R_2_MOVERIGHT:
+	case R_2_MOVEUP:
+		processMovement(request, param);
+		break;
+		
 	defaul:
 		break;
 	}

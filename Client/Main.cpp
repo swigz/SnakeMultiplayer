@@ -169,7 +169,7 @@ void drawMap(HWND hWnd, HDC hDC, PAINTSTRUCT pt) {
 				SelectObject(MemDC, bm[10 + getPlayerId(i, j)]);
 				break;
 			}
-			StretchBlt(hDC, MAP_Y + ((j - 1)*IMG_SIZE + 50), MAP_X + ((i - 1)*IMG_SIZE + 25), 70, 70, MemDC, 0, 0, 35, 35, SRCCOPY);
+			StretchBlt(hDC, MAP_Y + ((j - 1)*IMG_SIZE + 50), MAP_X + ((i - 1)*IMG_SIZE + 25), 35, 35, MemDC, 0, 0, 70, 70, SRCCOPY);
 		}
 	
 		
@@ -222,7 +222,13 @@ void showLobbyMenu(HWND hWnd) {
 void showInGameScreen(HWND hWnd, HDC hDC, PAINTSTRUCT pt) {
 	hideSingleElement(lobbyMenu[0]);
 	drawMap(hWnd, hDC, pt);
+	/*while (1) {
+		Sleep(500);
 
+		gameLogic();
+
+		drawMap(hWnd, hDC, pt);
+	}*/
 }
 
 
@@ -269,9 +275,11 @@ void exitApp(HWND hWnd) {
 void buttonClickEvent(HWND hWnd, WPARAM wParam) {
 	int nameLength = 0;
 	switch (LOWORD(wParam)) {
+
+
 	case LOGIN_LOCAL_BUTTON:
 		if (clientStatus == SERVERS_OFFLINE) {
-			if (connectToServer(hWnd) == -1) {
+			if (connectToServer(hWnd, FALSE) == -1) {
 				MessageBox(hWnd, TEXT("No servers are online at the time."), TEXT("Error"), MB_ICONEXCLAMATION);
 				break;
 			}
@@ -285,11 +293,36 @@ void buttonClickEvent(HWND hWnd, WPARAM wParam) {
 		sendRequest(hWnd, R_CONNECT);
 		break;
 
+
+	case LOGIN_REMOTE_BUTTON:
+		TCHAR aux[30];
+		int domainLength;
+
+		if (clientStatus == SERVERS_OFFLINE) {
+			domainLength = GetWindowTextLength(initialMenu[3]) + 1;
+			GetWindowText(initialMenu[1], aux, domainLength);
+			if (connectToServer(hWnd, TRUE, aux) == -1) {
+				MessageBox(hWnd, TEXT("No servers are online at the time."), TEXT("Error"), MB_ICONEXCLAMATION);
+				break;
+			}
+		}
+		nameLength = GetWindowTextLength(initialMenu[1]) + 1;
+		if (nameLength <= 1) {
+			MessageBox(hWnd, TEXT("Please type a name"), TEXT("Error"), MB_ICONERROR);
+			break;
+		}
+		GetWindowText(initialMenu[1], username, nameLength);
+		sendRequest(hWnd, R_CONNECT);
+		break;
+
+
 	case GAME_MENU_BUTTON:
 		clientStatus = INGAME_MENU;
 		sendRequest(hWnd, R_CHECK_GAME_STATUS);
 		InvalidateRect(hWnd, NULL, 1);
 		break;
+
+
 	case CREATE_GAME_BUTTON:
 		if (gameStatus != SERVER_NO_GAME_RUNNING) {
 			MessageBox(hWnd, TEXT("There is a game running or a game accepting players. Hit refresh to refresh."), TEXT("Warning"), MB_ICONHAND);
@@ -297,10 +330,14 @@ void buttonClickEvent(HWND hWnd, WPARAM wParam) {
 		}
 		createGameDialog(hWnd);
 		break;
+
+
 	case REFRESH_STATUS_BUTTON:
 		sendRequest(hWnd, R_CHECK_GAME_STATUS);
 		MessageBox(hWnd, TEXT("Server Status refreshed!"), TEXT("YAY!"), MB_ICONEXCLAMATION);
 		break;
+
+
 	case GAMEMENU_BACK_BUTTON:
 		for (short int i = 0; i < GAME_MENU_SIZE; i++) {
 			hideSingleElement(gameMenu[i]);
@@ -308,17 +345,25 @@ void buttonClickEvent(HWND hWnd, WPARAM wParam) {
 		clientStatus = LOGGED_IN;
 		InvalidateRect(hWnd, NULL, 1);
 		break;
+
+
 	case LOGOUT_BUTTON:
 		sendRequest(hWnd, R_LOGOUT);
 		break;
+
+
 	case JOIN_GAME_BUTTON:
 		sendRequest(hWnd, R_JOINGAME);
 		break;
+
+
 	case LOBBYMENU_START_BUTTON:
 		//sendRequest(hWnd, R_STARTGAME);
 		clientStatus = PLAYING;
 		InvalidateRect(hWnd, NULL, 1);
 		break;
+
+
 	default:
 		break;
 	}
@@ -387,8 +432,6 @@ LRESULT CALLBACK MainEvent(HWND hWnd, UINT messg, WPARAM wParam, LPARAM lParam) 
 
 	switch (messg) {
 	case WM_CREATE:
-		if (connectToServer(hWnd) == -1) 
-			clientStatus = SERVERS_OFFLINE;
 		SetupInitialMenu(hWnd);
 		setupMainMenu(hWnd);
 		setupGameMenu(hWnd);

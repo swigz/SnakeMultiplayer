@@ -12,6 +12,7 @@
 
 
 LRESULT CALLBACK MainEvent(HWND, UINT, WPARAM, LPARAM);
+int connectToServer(HWND hWnd, BOOL remote, TCHAR* domain);
 void SetupInitialMenu(HWND hWnd);
 void buttonClickEvent(HWND hWnd, WPARAM wParam);
 void setupMainMenu(HWND hWnd);
