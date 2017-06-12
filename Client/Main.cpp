@@ -79,6 +79,47 @@ void showMultipleElement(HWND hWnd[], UINT dim)
 }
 
 
+void drawMap(HWND hWnd, HDC hDC, PAINTSTRUCT pt) {
+	HDC MemDC;
+	HBITMAP bm[26];
+	TCHAR error[100];
+	BOOL accessible;
+
+	bm[0] = LoadBitmap(GetModuleHandle(NULL), MAKEINTRESOURCE(IDB_BLANK));
+	bm[1] = LoadBitmap(GetModuleHandle(NULL), MAKEINTRESOURCE(IDB_FOOD));
+	bm[2] = LoadBitmap(GetModuleHandle(NULL), MAKEINTRESOURCE(IDB_DRUNK));
+	bm[3] = LoadBitmap(GetModuleHandle(NULL), MAKEINTRESOURCE(IDB_GLUE));
+	bm[4] = LoadBitmap(GetModuleHandle(NULL), MAKEINTRESOURCE(IDB_GRENADE));
+	bm[5] = LoadBitmap(GetModuleHandle(NULL), MAKEINTRESOURCE(IDB_ICE));
+	bm[6] = LoadBitmap(GetModuleHandle(NULL), MAKEINTRESOURCE(IDB_OIL));
+	bm[7] = LoadBitmap(GetModuleHandle(NULL), MAKEINTRESOURCE(IDB_O_GLUE));
+	bm[8] = LoadBitmap(GetModuleHandle(NULL), MAKEINTRESOURCE(IDB_O_OIL));
+	bm[9] = LoadBitmap(GetModuleHandle(NULL), MAKEINTRESOURCE(IDB_O_VODKA));
+	bm[10] = LoadBitmap(GetModuleHandle(NULL), MAKEINTRESOURCE(IDB_HEAD1));
+	bm[11] = LoadBitmap(GetModuleHandle(NULL), MAKEINTRESOURCE(IDB_HEAD2));
+	bm[12] = LoadBitmap(GetModuleHandle(NULL), MAKEINTRESOURCE(IDB_HEAD3));
+	bm[13] = LoadBitmap(GetModuleHandle(NULL), MAKEINTRESOURCE(IDB_HEAD4));
+	bm[14] = LoadBitmap(GetModuleHandle(NULL), MAKEINTRESOURCE(IDB_HEAD5));
+	bm[15] = LoadBitmap(GetModuleHandle(NULL), MAKEINTRESOURCE(IDB_HEAD6));
+	bm[16] = LoadBitmap(GetModuleHandle(NULL), MAKEINTRESOURCE(IDB_HEAD7));
+	bm[17] = LoadBitmap(GetModuleHandle(NULL), MAKEINTRESOURCE(IDB_HEAD8));
+	bm[18] = LoadBitmap(GetModuleHandle(NULL), MAKEINTRESOURCE(IDB_SNAKE1));
+	bm[19] = LoadBitmap(GetModuleHandle(NULL), MAKEINTRESOURCE(IDB_SNAKE2));
+	bm[20] = LoadBitmap(GetModuleHandle(NULL), MAKEINTRESOURCE(IDB_SNAKE3));
+	bm[21] = LoadBitmap(GetModuleHandle(NULL), MAKEINTRESOURCE(IDB_SNAKE4));
+	bm[22] = LoadBitmap(GetModuleHandle(NULL), MAKEINTRESOURCE(IDB_SNAKE5));
+	bm[23] = LoadBitmap(GetModuleHandle(NULL), MAKEINTRESOURCE(IDB_SNAKE6));
+	bm[24] = LoadBitmap(GetModuleHandle(NULL), MAKEINTRESOURCE(IDB_SNAKE7));
+	bm[25] = LoadBitmap(GetModuleHandle(NULL), MAKEINTRESOURCE(IDB_SNAKE8));
+	bm[26] = LoadBitmap(GetModuleHandle(NULL), MAKEINTRESOURCE(IDB_WALL));
+	bm[27] = LoadBitmap(GetModuleHandle(NULL), MAKEINTRESOURCE(IDB_VODKA));
+
+	
+}
+
+
+
+
 void showInitialMenu(HWND hWnd) {
 	showMultipleElement(initialMenu, INITIAL_MENU_SIZE);
 }
