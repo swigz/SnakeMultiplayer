@@ -45,6 +45,7 @@ typedef struct Game {
 }game;
 
 typedef struct Message {
+	int aux;
 	int playerNumber;
 	TCHAR info[NAMESIZE];
 	TCHAR name[NAMESIZE];

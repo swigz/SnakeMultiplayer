@@ -111,11 +111,7 @@ void disconnectClient(LPVOID param, Message answer) {
 }
 
 
-void initClient(int i) {
-	players[i].score = 0;
-	players[i].speed = SNAKE_SPEED;
-	//fazer o resto
-}
+
 
 void joinGameLobby(LPVOID param, Message request, Message answer) {
 	for (short int i = 0; i < MAX_PLAYERS; i++) {

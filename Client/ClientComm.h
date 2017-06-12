@@ -1,5 +1,6 @@
 #include "Resource.h"
 #include "resource1.h"
+
 HANDLE hPipe, canWrite;
 BOOL fSuccess = FALSE;
 DWORD  cbRead, cbToWrite, cbWritten, dwMode;
@@ -115,21 +116,24 @@ void writeClientRequest(HWND hWnd, Message request) {
 void sendGameParameters(HWND hWnd) {
 	Message request;
 	TCHAR str[NAMESIZE];
-	request.game.bots = TRUE;
+	request.game.bots = FALSE;
 	request.playerNumber = 1;
 	
-	if (IsDlgButtonChecked(hWnd, IDC_CHECK2)) {
+	/*if (IsDlgButtonChecked(hWnd, IDC_CHECK2)) {
 		GetDlgItemText(hWnd, IDC_EDIT1, request.player2Name, NAMESIZE);
 		request.playerNumber = 2;
 		_tcscpy(request.player2Name, TEXT("unknown"));
-	}
-	if (IsDlgButtonChecked(hWnd, IDC_CHECK3)) {
+	}*/
+	/*if (IsDlgButtonChecked(hWnd, IDC_CHECK3)) {
 		request.game.bots = FALSE;
-	}
+	}*/
+
 	GetDlgItemText(hWnd, IDC_EDIT2, str, NAMESIZE);
 	request.game.maxPlayers = _wtoi(str);
 	GetDlgItemText(hWnd, IDC_EDIT3, str, NAMESIZE);
 	request.game.bots = _wtoi(str);
+	GetDlgItemText(hWnd, 1020, str, NAMESIZE);
+	request.aux = _wtoi(str);
 
 	request.code = R_CREATEGAME;
 	writeClientRequest(hWnd, request);

@@ -106,7 +106,7 @@ void showLobbyMenu(HWND hWnd) {
 
 void showInGameScreen(HWND hWnd, HDC hDC, PAINTSTRUCT pt) {
 	hideSingleElement(lobbyMenu[0]);
-	drawMap(hWnd, hDC, pt);
+	//drawMap(hWnd, hDC, pt);
 
 }
 
