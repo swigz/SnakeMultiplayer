@@ -1,19 +1,17 @@
 ﻿  GameServer.cpp
 c:\users\daniel\documents\visual studio 2015\projects\tp_so2_v4\gameserver\comms.h(2): warning C4067: unexpected tokens following preprocessor directive - expected a newline
-c:\users\daniel\documents\visual studio 2015\projects\tp_so2_v4\gamelibrary\gamelib.h(264): warning C4101: 't': unreferenced local variable
-c:\users\daniel\documents\visual studio 2015\projects\tp_so2_v4\gamelibrary\gamelib.h(298): warning C4101: 'fInit': unreferenced local variable
-c:\users\daniel\documents\visual studio 2015\projects\tp_so2_v4\gamelibrary\gamelib.h(298): warning C4101: 'fIgnore': unreferenced local variable
-c:\users\daniel\documents\visual studio 2015\projects\tp_so2_v4\gamelibrary\gamelib.h(314): warning C4101: 'y': unreferenced local variable
-c:\users\daniel\documents\visual studio 2015\projects\tp_so2_v4\gamelibrary\gamelib.h(314): warning C4101: 'x': unreferenced local variable
-c:\users\daniel\documents\visual studio 2015\projects\tp_so2_v4\gamelibrary\gamelib.h(340): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
-c:\users\daniel\documents\visual studio 2015\projects\tp_so2_v4\gamelibrary\gamelib.h(479): warning C4101: 'y': unreferenced local variable
-c:\users\daniel\documents\visual studio 2015\projects\tp_so2_v4\gamelibrary\gamelib.h(479): warning C4101: 'x': unreferenced local variable
+c:\users\daniel\documents\visual studio 2015\projects\tp_so2_v4\gamelibrary\gamelib.h(263): warning C4101: 't': unreferenced local variable
+c:\users\daniel\documents\visual studio 2015\projects\tp_so2_v4\gamelibrary\gamelib.h(297): warning C4101: 'fInit': unreferenced local variable
+c:\users\daniel\documents\visual studio 2015\projects\tp_so2_v4\gamelibrary\gamelib.h(297): warning C4101: 'fIgnore': unreferenced local variable
+c:\users\daniel\documents\visual studio 2015\projects\tp_so2_v4\gamelibrary\gamelib.h(313): warning C4101: 'y': unreferenced local variable
+c:\users\daniel\documents\visual studio 2015\projects\tp_so2_v4\gamelibrary\gamelib.h(313): warning C4101: 'x': unreferenced local variable
+c:\users\daniel\documents\visual studio 2015\projects\tp_so2_v4\gamelibrary\gamelib.h(346): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
 c:\users\daniel\documents\visual studio 2015\projects\tp_so2_v4\gameserver\comms.h(61): warning C4996: 'wcscpy': This function or variable may be unsafe. Consider using wcscpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
   c:\program files (x86)\windows kits\10\include\10.0.10240.0\ucrt\corecrt_wstring.h(121): note: see declaration of 'wcscpy'
-c:\users\daniel\documents\visual studio 2015\projects\tp_so2_v4\gameserver\comms.h(190): warning C4102: 'defaul': unreferenced label
-c:\users\daniel\documents\visual studio 2015\projects\tp_so2_v4\gameserver\comms.h(238): warning C4474: 'wprintf' : too many arguments passed for format string
-  c:\users\daniel\documents\visual studio 2015\projects\tp_so2_v4\gameserver\comms.h(238): note: placeholders and their parameters expect 0 variadic arguments, but 1 were provided
+c:\users\daniel\documents\visual studio 2015\projects\tp_so2_v4\gameserver\comms.h(264): warning C4102: 'defaul': unreferenced label
+c:\users\daniel\documents\visual studio 2015\projects\tp_so2_v4\gameserver\comms.h(313): warning C4474: 'wprintf' : too many arguments passed for format string
+  c:\users\daniel\documents\visual studio 2015\projects\tp_so2_v4\gameserver\comms.h(313): note: placeholders and their parameters expect 0 variadic arguments, but 1 were provided
 c:\users\daniel\documents\visual studio 2015\projects\tp_so2_v4\gameserver\gameserver.cpp(44): warning C4101: 'pSA': unreferenced local variable
-c:\users\daniel\documents\visual studio 2015\projects\tp_so2_v4\gamelibrary\gamelib.h(91): warning C4715: 'getPlayerId': not all control paths return a value
+c:\users\daniel\documents\visual studio 2015\projects\tp_so2_v4\gamelibrary\gamelib.h(90): warning C4715: 'getPlayerId': not all control paths return a value
   GameServer.vcxproj -> C:\Users\Daniel\documents\visual studio 2015\Projects\TP_SO2_V4\Debug\GameServer.exe
   GameServer.vcxproj -> C:\Users\Daniel\documents\visual studio 2015\Projects\TP_SO2_V4\Debug\GameServer.pdb (Full PDB)

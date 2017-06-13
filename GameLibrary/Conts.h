@@ -1,7 +1,7 @@
 #pragma once
 #define NAMESIZE 64
 #define MAX_PLAYERS 8
-#define BUFSIZE 2048
+#define BUFSIZE 4000 
 #define SNAKE_SPEED 100
 #define MAP_X 0
 #define MAP_Y  0
@@ -80,6 +80,7 @@
 #define DISCONNECTED 705
 #define INGAME_MENU 706
 #define INGAME_LOBBY 707
+#define TIME_INSTANTS 15
 
 //response do servidor
 #define SERVER_ERROR_NAME_EXISTS 800
@@ -92,6 +93,7 @@
 #define SERVER_GAME_CREATE_SUCCESS 807
 #define SERVER_GAME_JOIN_SUCCESS 808
 #define SERVER_GAME_STARTED 809
+#define SERVER_UPDATE_MAP 810
 
 
 #define BR_GAME_CREATED 900

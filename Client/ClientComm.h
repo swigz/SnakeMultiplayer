@@ -1,14 +1,14 @@
 #include "Resource.h"
 #include "resource2.h"
 LPTSTR pipename = TEXT("\\\\.\\pipe\\pipename");
+LPTSTR remotePipe = TEXT("\\\\192.168.1.68\\pipe\\pipename");
 HANDLE hPipe, canWrite;
 BOOL fSuccess = FALSE;
 DWORD  cbRead, cbToWrite, cbWritten, dwMode;
-LPTSTR pipename = TEXT("\\\\.\\pipe\\pipename");
 TCHAR username[NAMESIZE];
 int clientStatus;
 int gameStatus;
-
+game g;
 void closeClient(HANDLE hPipe) {
 	CloseHandle(hPipe);
 }
@@ -40,7 +40,9 @@ void ProcessServerMessage(HWND hWnd, Message answer) {
 		break;
 	case SERVER_GAME_STARTED:
 		clientStatus = PLAYING;
-
+		break;
+	case SERVER_UPDATE_MAP:
+		g = answer.game;
 		break;
 	default:
 		break;
@@ -88,7 +90,7 @@ DWORD WINAPI ClientThread(LPVOID param) {
 			break;
 	}
 	return 1;
-	
+
 }
 void writeClientRequest(HWND hWnd, Message request) {
 	BOOL fSuccess = FALSE;
@@ -96,7 +98,7 @@ void writeClientRequest(HWND hWnd, Message request) {
 	OVERLAPPED OverlWr = { 0 };
 	TCHAR str[NAMESIZE];
 
-	
+
 	ZeroMemory(&OverlWr, sizeof(OverlWr));
 	ResetEvent(canWrite);
 	OverlWr.hEvent = canWrite;
@@ -118,14 +120,14 @@ void sendGameParameters(HWND hWnd) {
 	TCHAR str[NAMESIZE];
 	request.game.bots = FALSE;
 	request.playerNumber = 1;
-	
+
 	/*if (IsDlgButtonChecked(hWnd, IDC_CHECK2)) {
-		GetDlgItemText(hWnd, IDC_EDIT1, request.player2Name, NAMESIZE);
-		request.playerNumber = 2;
-		_tcscpy(request.player2Name, TEXT("unknown"));
+	GetDlgItemText(hWnd, IDC_EDIT1, request.player2Name, NAMESIZE);
+	request.playerNumber = 2;
+	_tcscpy(request.player2Name, TEXT("unknown"));
 	}*/
 	/*if (IsDlgButtonChecked(hWnd, IDC_CHECK3)) {
-		request.game.bots = FALSE;
+	request.game.bots = FALSE;
 	}*/
 
 	GetDlgItemText(hWnd, IDC_EDIT2, str, NAMESIZE);
@@ -156,8 +158,7 @@ void sendRequest(HWND hWnd, int command) {
 }
 
 int connectToServer(HWND hWnd, BOOL remote, TCHAR* domain) {
-	
-	LPTSTR remotePipe;
+
 	HANDLE hThread, hUserToken;
 	BOOL log;
 	TCHAR password[20];
@@ -165,40 +166,56 @@ int connectToServer(HWND hWnd, BOOL remote, TCHAR* domain) {
 	TCHAR str[NAMESIZE];
 	TCHAR aux[20];
 	if (remote) {
-		_tcscpy(remotePipe,TEXT("\\\\"));
-		_tcscat(remotePipe, domain);
-		_tcscat(remotePipe, TEXT("\\pipe\\pipename"));
-		_tcscpy(username, TEXT("user1"));
-		_tcscpy(password, TEXT("boas"));
 
 
-		log = LogonUser(username, domain, password, LOGON32_LOGON_NEW_CREDENTIALS, LOGON32_PROVIDER_DEFAULT, &hUserToken);
+		log = LogonUser(TEXT("Daniel"), domain, TEXT("cigas"), LOGON32_LOGON_NEW_CREDENTIALS, LOGON32_PROVIDER_DEFAULT, &hUserToken);
 		log = ImpersonateLoggedOnUser(hUserToken);
+		if (log) {
+			MessageBox(hWnd, TEXT("SUP"), TEXT("Error"), MB_ICONERROR);
+		}
 	}
 	while (1)
 	{
-		hPipe = CreateFile(pipename, GENERIC_READ | GENERIC_WRITE, 0 | FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, OPEN_EXISTING, 0 | FILE_FLAG_OVERLAPPED, NULL);
-		if (hPipe != INVALID_HANDLE_VALUE) 
-			break;
+		if (remote) {
+			hPipe = CreateFile(remotePipe, GENERIC_READ | GENERIC_WRITE, 0 | FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, OPEN_EXISTING, 0 | FILE_ATTRIBUTE_NORMAL, NULL);
+			if (hPipe != INVALID_HANDLE_VALUE)
+				break;
 
-		if (GetLastError() != ERROR_PIPE_BUSY)
-		{
-			_stprintf(str, TEXT("No servers are online..."));
-			MessageBox(hWnd, str, TEXT("Error"), MB_ICONERROR);
+			if (GetLastError() != ERROR_PIPE_BUSY)
+			{
+				_stprintf(str, TEXT("No servers are online..."));
+				MessageBox(hWnd, str, TEXT("Error"), MB_ICONERROR);
+			}
+			if (!WaitNamedPipe(remotePipe, 20000))
+			{
+				return -1;
+			}
 		}
-
-		// Exit if an error other than ERROR_PIPE_BUSY occurs. 
-
-		if (GetLastError() != ERROR_PIPE_BUSY)
+		else
 		{
-			return -1;
-		}
+			hPipe = CreateFile(pipename, GENERIC_READ | GENERIC_WRITE, 0 | FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, OPEN_EXISTING, 0 | FILE_FLAG_OVERLAPPED, NULL);
+			if (hPipe != INVALID_HANDLE_VALUE)
+				break;
 
-		// All pipe instances are busy, so wait for 20 seconds. 
+			if (GetLastError() != ERROR_PIPE_BUSY)
+			{
+				_stprintf(str, TEXT("No servers are online..."));
+				MessageBox(hWnd, str, TEXT("Error"), MB_ICONERROR);
+			}
 
-		if (!WaitNamedPipe(pipename, 20000))
-		{
-			return -1;
+			// Exit if an error other than ERROR_PIPE_BUSY occurs. 
+
+			if (GetLastError() != ERROR_PIPE_BUSY)
+			{
+				return -1;
+			}
+
+			// All pipe instances are busy, so wait for 20 seconds. 
+
+			if (!WaitNamedPipe(pipename, 20000))
+			{
+				return -1;
+			}
 		}
 	}
 	dwMode = PIPE_READMODE_MESSAGE;

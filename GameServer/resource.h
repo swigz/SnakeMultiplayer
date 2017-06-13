@@ -8,3 +8,4 @@ void login(LPVOID param, TCHAR* name, Message answer);
 void cleanClientHandles(LPVOID param);
 int writeServerBroadcast(Message answer);
 void disconnectClient(LPVOID param, Message answer);
+void initGame(Message answer);

@@ -1,35 +1,37 @@
 ﻿  Main.cpp
-c:\users\daniel\documents\visual studio 2015\projects\tp_so2_v4\gamelibrary\gamelib.h(262): warning C4101: 't': unreferenced local variable
-c:\users\daniel\documents\visual studio 2015\projects\tp_so2_v4\gamelibrary\gamelib.h(296): warning C4101: 'fInit': unreferenced local variable
-c:\users\daniel\documents\visual studio 2015\projects\tp_so2_v4\gamelibrary\gamelib.h(296): warning C4101: 'fIgnore': unreferenced local variable
-c:\users\daniel\documents\visual studio 2015\projects\tp_so2_v4\gamelibrary\gamelib.h(312): warning C4101: 'y': unreferenced local variable
-c:\users\daniel\documents\visual studio 2015\projects\tp_so2_v4\gamelibrary\gamelib.h(312): warning C4101: 'x': unreferenced local variable
-c:\users\daniel\documents\visual studio 2015\projects\tp_so2_v4\gamelibrary\gamelib.h(338): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
-c:\users\daniel\documents\visual studio 2015\projects\tp_so2_v4\gamelibrary\gamelib.h(477): warning C4101: 'y': unreferenced local variable
-c:\users\daniel\documents\visual studio 2015\projects\tp_so2_v4\gamelibrary\gamelib.h(477): warning C4101: 'x': unreferenced local variable
-c:\users\daniel\documents\visual studio 2015\projects\tp_so2_v4\client\clientcomm.h(64): warning C4996: '_swprintf': This function or variable may be unsafe. Consider using _swprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+c:\users\daniel\documents\visual studio 2015\projects\tp_so2_v4\gamelibrary\gamelib.h(263): warning C4101: 't': unreferenced local variable
+c:\users\daniel\documents\visual studio 2015\projects\tp_so2_v4\gamelibrary\gamelib.h(297): warning C4101: 'fInit': unreferenced local variable
+c:\users\daniel\documents\visual studio 2015\projects\tp_so2_v4\gamelibrary\gamelib.h(297): warning C4101: 'fIgnore': unreferenced local variable
+c:\users\daniel\documents\visual studio 2015\projects\tp_so2_v4\gamelibrary\gamelib.h(313): warning C4101: 'y': unreferenced local variable
+c:\users\daniel\documents\visual studio 2015\projects\tp_so2_v4\gamelibrary\gamelib.h(313): warning C4101: 'x': unreferenced local variable
+c:\users\daniel\documents\visual studio 2015\projects\tp_so2_v4\gamelibrary\gamelib.h(346): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
+c:\users\daniel\documents\visual studio 2015\projects\tp_so2_v4\client\clientcomm.h(66): warning C4996: '_swprintf': This function or variable may be unsafe. Consider using _swprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
   c:\program files (x86)\windows kits\10\include\10.0.10240.0\ucrt\corecrt_wstdio.h(1444): note: see declaration of '_swprintf'
-c:\users\daniel\documents\visual studio 2015\projects\tp_so2_v4\client\clientcomm.h(82): warning C4996: '_swprintf': This function or variable may be unsafe. Consider using _swprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+c:\users\daniel\documents\visual studio 2015\projects\tp_so2_v4\client\clientcomm.h(84): warning C4996: '_swprintf': This function or variable may be unsafe. Consider using _swprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
   c:\program files (x86)\windows kits\10\include\10.0.10240.0\ucrt\corecrt_wstdio.h(1444): note: see declaration of '_swprintf'
-c:\users\daniel\documents\visual studio 2015\projects\tp_so2_v4\client\clientcomm.h(110): warning C4996: '_swprintf': This function or variable may be unsafe. Consider using _swprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+c:\users\daniel\documents\visual studio 2015\projects\tp_so2_v4\client\clientcomm.h(112): warning C4996: '_swprintf': This function or variable may be unsafe. Consider using _swprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
   c:\program files (x86)\windows kits\10\include\10.0.10240.0\ucrt\corecrt_wstdio.h(1444): note: see declaration of '_swprintf'
-c:\users\daniel\documents\visual studio 2015\projects\tp_so2_v4\client\clientcomm.h(152): warning C4996: '_swprintf': This function or variable may be unsafe. Consider using _swprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+c:\users\daniel\documents\visual studio 2015\projects\tp_so2_v4\client\clientcomm.h(154): warning C4996: '_swprintf': This function or variable may be unsafe. Consider using _swprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
   c:\program files (x86)\windows kits\10\include\10.0.10240.0\ucrt\corecrt_wstdio.h(1444): note: see declaration of '_swprintf'
-c:\users\daniel\documents\visual studio 2015\projects\tp_so2_v4\client\clientcomm.h(153): warning C4996: 'wcscpy': This function or variable may be unsafe. Consider using wcscpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+c:\users\daniel\documents\visual studio 2015\projects\tp_so2_v4\client\clientcomm.h(155): warning C4996: 'wcscpy': This function or variable may be unsafe. Consider using wcscpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
   c:\program files (x86)\windows kits\10\include\10.0.10240.0\ucrt\corecrt_wstring.h(121): note: see declaration of 'wcscpy'
-c:\users\daniel\documents\visual studio 2015\projects\tp_so2_v4\client\clientcomm.h(143): warning C4101: 'dim': unreferenced local variable
-c:\users\daniel\documents\visual studio 2015\projects\tp_so2_v4\client\clientcomm.h(170): warning C4996: '_swprintf': This function or variable may be unsafe. Consider using _swprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+c:\users\daniel\documents\visual studio 2015\projects\tp_so2_v4\client\clientcomm.h(145): warning C4101: 'dim': unreferenced local variable
+c:\users\daniel\documents\visual studio 2015\projects\tp_so2_v4\client\clientcomm.h(186): warning C4996: '_swprintf': This function or variable may be unsafe. Consider using _swprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
   c:\program files (x86)\windows kits\10\include\10.0.10240.0\ucrt\corecrt_wstdio.h(1444): note: see declaration of '_swprintf'
-c:\users\daniel\documents\visual studio 2015\projects\tp_so2_v4\client\clientcomm.h(201): warning C4996: '_swprintf': This function or variable may be unsafe. Consider using _swprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+c:\users\daniel\documents\visual studio 2015\projects\tp_so2_v4\client\clientcomm.h(202): warning C4996: '_swprintf': This function or variable may be unsafe. Consider using _swprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
   c:\program files (x86)\windows kits\10\include\10.0.10240.0\ucrt\corecrt_wstdio.h(1444): note: see declaration of '_swprintf'
-c:\users\daniel\documents\visual studio 2015\projects\tp_so2_v4\client\clientcomm.h(210): warning C4996: '_swprintf': This function or variable may be unsafe. Consider using _swprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+c:\users\daniel\documents\visual studio 2015\projects\tp_so2_v4\client\clientcomm.h(234): warning C4996: '_swprintf': This function or variable may be unsafe. Consider using _swprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
   c:\program files (x86)\windows kits\10\include\10.0.10240.0\ucrt\corecrt_wstdio.h(1444): note: see declaration of '_swprintf'
+c:\users\daniel\documents\visual studio 2015\projects\tp_so2_v4\client\clientcomm.h(243): warning C4996: '_swprintf': This function or variable may be unsafe. Consider using _swprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  c:\program files (x86)\windows kits\10\include\10.0.10240.0\ucrt\corecrt_wstdio.h(1444): note: see declaration of '_swprintf'
+c:\users\daniel\documents\visual studio 2015\projects\tp_so2_v4\client\clientcomm.h(167): warning C4101: 'aux': unreferenced local variable
+c:\users\daniel\documents\visual studio 2015\projects\tp_so2_v4\client\clientcomm.h(164): warning C4101: 'password': unreferenced local variable
 c:\users\daniel\documents\visual studio 2015\projects\tp_so2_v4\client\main.cpp(76): warning C4018: '<': signed/unsigned mismatch
 c:\users\daniel\documents\visual studio 2015\projects\tp_so2_v4\client\main.cpp(120): warning C4996: '_swprintf': This function or variable may be unsafe. Consider using _swprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
   c:\program files (x86)\windows kits\10\include\10.0.10240.0\ucrt\corecrt_wstdio.h(1444): note: see declaration of '_swprintf'
 c:\users\daniel\documents\visual studio 2015\projects\tp_so2_v4\client\main.cpp(86): warning C4101: 'accessible': unreferenced local variable
-c:\users\daniel\documents\visual studio 2015\projects\tp_so2_v4\client\main.cpp(363): warning C4101: 'str': unreferenced local variable
-c:\users\daniel\documents\visual studio 2015\projects\tp_so2_v4\gamelibrary\gamelib.h(89): warning C4715: 'getPlayerId': not all control paths return a value
-c:\users\daniel\documents\visual studio 2015\projects\tp_so2_v4\client\clientcomm.h(214): warning C4715: 'connectToServer': not all control paths return a value
+c:\users\daniel\documents\visual studio 2015\projects\tp_so2_v4\client\main.cpp(416): warning C4101: 'str': unreferenced local variable
+c:\users\daniel\documents\visual studio 2015\projects\tp_so2_v4\gamelibrary\gamelib.h(90): warning C4715: 'getPlayerId': not all control paths return a value
+c:\users\daniel\documents\visual studio 2015\projects\tp_so2_v4\client\clientcomm.h(247): warning C4715: 'connectToServer': not all control paths return a value
   Client.vcxproj -> C:\Users\Daniel\documents\visual studio 2015\Projects\TP_SO2_V4\Debug\Client.exe
   Client.vcxproj -> C:\Users\Daniel\documents\visual studio 2015\Projects\TP_SO2_V4\Debug\Client.pdb (Full PDB)

@@ -67,15 +67,14 @@ typedef struct Message {
 static LPVOID lpvMem = NULL;      // pointer to shared memory
 static HANDLE hMapObject = NULL;  // handle to file mapping
 jogadores players[MAX_PLAYERS];
-game g;
 //BOOL gameOver;
-
+int libMaxPlayers=2;
 
 
 //OBJ EFEITOS
 
 int getPlayerId(int x, int y) {
-	for (int i = 0; i<MAX_PLAYERS; i++)
+	for (int i = 0; i<libMaxPlayers; i++)
 		if (players[i].inGame)
 		{
 			if (players[i].headX == x && players[i].headY == y)
@@ -101,7 +100,7 @@ DWORD WINAPI DurationThread(DWORD i) {
 DWORD WINAPI O_DurationThread(DWORD i) {
 	Sleep(DURATION * 1000);
 
-	for (int c = 0; c<g.maxPlayers; c++)
+	for (int c = 0; c<libMaxPlayers; c++)
 		if (c != i)
 			players[c].speed = SNAKE_SPEED;
 
@@ -120,7 +119,7 @@ DWORD WINAPI DrunkThread(DWORD i) {
 DWORD WINAPI O_DrunkThread(DWORD i) {
 	Sleep(DURATION * 1000);
 
-	for (int c = 0; c < g.maxPlayers; c++)
+	for (int c = 0; c < libMaxPlayers; c++)
 		if (c != i)
 			players[c].drunk = FALSE;
 
@@ -151,7 +150,7 @@ void O_OilEffect(int i) {
 	HANDLE hOilThread = NULL;
 	DWORD dwOilThreadId = 0;
 
-	for(int c=0;c<g.maxPlayers;c++)
+	for(int c=0;c<libMaxPlayers;c++)
 		if(c!=i)
 			players[c].speed = SNAKE_SPEED + 10;
 
@@ -191,7 +190,7 @@ void O_GlueEffect(int i) {
 	DWORD dwGlueThreadId = 0;
 
 
-	for (int c = 0; c<g.maxPlayers; c++)
+	for (int c = 0; c<libMaxPlayers; c++)
 		if (c != i)
 			players[c].speed = SNAKE_SPEED - 10;
 
@@ -232,7 +231,7 @@ void O_VodkaEffect(int i) {
 	DWORD dwVodkaThreadId = 0;
 
 
-	for (int c = 0; c<g.maxPlayers; c++)
+	for (int c = 0; c<libMaxPlayers; c++)
 		if (c != i)
 	players[i].drunk = TRUE;
 
@@ -260,7 +259,7 @@ BOOL setgameOver() {
 	return false;
 
 }
-void randomObject() {
+game randomObject(game g) {
 	time_t t;
 	int x=0, y=0,prob=0;
 	x = rand() % MAP_SIZE - 2;
@@ -289,7 +288,7 @@ void randomObject() {
 		g.board.cell[x][y].type = O_OIL;
 	if (prob > 96)
 		g.board.cell[x][y].type = O_GLUE;
-
+	return g;
 }
 
 
@@ -308,51 +307,62 @@ BOOL APIENTRY DllMain(HMODULE hModule,DWORD ul_reason_for_call, LPVOID lpReserve
 		return TRUE;
 }
 
-void CriaMapaNormal()
+game CriaMapaNormal(game g)
 {
 	int n=0;
 	int x, y;
+
 	for (short int i = 0; i < MAP_COLUMNS; i++)
 		for (short int j = 0; j < MAP_ROWS; j++)
-			if (j == 0 || j == MAP_COLUMNS - 1 || i == 0 || i == MAP_ROWS - 1)
+			if (j == 0 || j == MAP_COLUMNS - 1 || i == 0 || i == MAP_ROWS - 1) {
 				g.board.cell[i][j].type = WALL;
+				_tprintf(TEXT("CRIOU OBJETOS RIJOS \n"));
+			}
 			else
 				g.board.cell[i][j].type = BLANK;
+
 
 
 	while (n < MAX_OBJECTS)
 	{
 		
-		randomObject();
+		g = randomObject(g);
 		n++;
 
 	}
-	
+	_tprintf(TEXT("CRIOU OBJETOS RIJOS \n"));
 
+
+	return g;
 }
 
 
-void SnakesSetup() {
+game SnakesSetup(game g) {
 
 	int x, y;
-
-	for (int i = 0; i < g.maxPlayers; i++) {
+	
+	for (int i = 0; i < libMaxPlayers; i++) {
+		_tprintf(TEXT("prioca"));
 		srand(time(NULL));
+		
 		x = rand() % MAP_COLUMNS - 2;
 		y = rand() % MAP_ROWS - 2;
+	
 		while (g.board.cell[x][y].type != BLANK) {
+			_tprintf(TEXT("prioca"));
 			x = rand() % MAP_COLUMNS - 2;
 			y = rand() % MAP_ROWS - 2;
 
 		}
-
+		
 		players[i].headX = x;
 		players[i].headY = y;
 		g.board.cell[x][y].type = SNAKEHEAD;
 
 	}
+	return g;
 }
-void gameLogic() {
+game gameLogic(game g) {
 
 	for (int c = 0; c < MAX_PLAYERS; c++) {
 		if (players[c].isDead== FALSE) {
@@ -405,41 +415,41 @@ void gameLogic() {
 			if (g.board.cell[players[c].headX][players[c].headY].type == FOOD) {
 				players[c].ntail++;
 				players[c].score++;
-				randomObject();
+				randomObject(g);
 
 			}
 			if (g.board.cell[players[c].headX][players[c].headY].type == ICE) {
 				players[c].ntail--;
 				players[c].score -= 2;
-				randomObject();
+				randomObject(g);
 			}
 			if (g.board.cell[players[c].headX][players[c].headY].type == GRENADE) {
 				players[c].isDead = TRUE;
-				randomObject();
+				randomObject(g);
 			}
 			if (g.board.cell[players[c].headX][players[c].headY].type == VODKA) {
 				VodkaEffect(c);
-				randomObject();
+				randomObject(g);
 			}
 			if (g.board.cell[players[c].headX][players[c].headY].type == OIL) {
 				OilEffect(c);
-				randomObject();
+				randomObject(g);
 			}
 			if (g.board.cell[players[c].headX][players[c].headY].type == GLUE) {
 				GlueEffect(c);
-				randomObject();
+				randomObject(g);
 			}
 			if (g.board.cell[players[c].headX][players[c].headY].type == O_VODKA) {
 				O_VodkaEffect(c);
-				randomObject();
+				randomObject(g);
 			}
 			if (g.board.cell[players[c].headX][players[c].headY].type == O_OIL) {
 				O_OilEffect(c);
-				randomObject();
+				randomObject(g);
 			}
 			if (g.board.cell[players[c].headX][players[c].headY].type == O_GLUE) {
 				O_GlueEffect(c);
-				randomObject();
+				randomObject(g);
 			}
 			if (g.board.cell[players[c].headX][players[c].headY].type == WALL) {
 
@@ -470,49 +480,48 @@ void gameLogic() {
 			for (short int j = 0; j < MAP_ROWS; j++)
 				if (j == 0 || j == MAP_COLUMNS - 1 || i == 0 || i == MAP_ROWS - 1)
 					g.board.cell[i][j].type = WALL;
-
+		
 	}
-	setgameOver();
+	if(!setgameOver())
+	_tprintf(TEXT("UPDATING...\n"));
+	else 
+		_tprintf(TEXT("DAT BOI DIEDEDED\n"));
+	return g;
 }
 
-void  draw() {
-	int x, y;
-	system("cls");
-	//ciclo de preenchimento
-	for (short int i = 0; i < MAP_COLUMNS; i++) {
-		for (short int j = 0; j < MAP_ROWS; j++) {
-			switch (g.board.cell[i][j].type) {
-			case WALL:
-				_tprintf(TEXT("X"));
-				break;
-			case BLANK:
-				_tprintf(TEXT(" "));
-				break;
-			case FOOD:
-				_tprintf(TEXT("o"));
-				break;
-
-			case SNAKE:
-
-				for (int c = 0; c < g.maxPlayers; c++) {
-					if (i == players[c].headX && j == players[c].headY)
-						_tprintf(TEXT("%d"), c + 1);
-					else
-						for (int k = 0; k < players[c].ntail; k++)
-							if (i == players[c].tailX[k] && j == players[c].tailY[k])
-								_tprintf(TEXT("%d"), c + 1);
-				}
-				break;
-			}
-		}
-		_tprintf(TEXT("\n"));
-	}
-
-	
-
-
-
-}
+//void  draw() {
+//	int x, y;
+//	system("cls");
+//	//ciclo de preenchimento
+//	for (short int i = 0; i < MAP_COLUMNS; i++) {
+//		for (short int j = 0; j < MAP_ROWS; j++) {
+//			switch (g.board.cell[i][j].type) {
+//			case WALL:
+//				_tprintf(TEXT("X"));
+//				break;
+//			case BLANK:
+//				_tprintf(TEXT(" "));
+//				break;
+//			case FOOD:
+//				_tprintf(TEXT("o"));
+//				break;
+//
+//			case SNAKE:
+//
+//				for (int c = 0; c < g.maxPlayers; c++) {
+//					if (i == players[c].headX && j == players[c].headY)
+//						_tprintf(TEXT("%d"), c + 1);
+//					else
+//						for (int k = 0; k < players[c].ntail; k++)
+//							if (i == players[c].tailX[k] && j == players[c].tailY[k])
+//								_tprintf(TEXT("%d"), c + 1);
+//				}
+//				break;
+//			}
+//		}
+//		_tprintf(TEXT("\n"));
+//	}
+//}
 
 //void input() {
 //	if (_kbhit()) {

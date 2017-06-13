@@ -5,7 +5,7 @@ HWND initialMenu[INITIAL_MENU_SIZE];
 HWND mainMenu[MAIN_MENU_SIZE];
 HWND gameMenu[GAME_MENU_SIZE];
 HWND lobbyMenu[1];
-
+BOOL lol=FALSE;
 int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, int nCmdShow) {
 	
 	HWND hWnd;
@@ -84,7 +84,7 @@ void drawMap(HWND hWnd, HDC hDC, PAINTSTRUCT pt) {
 	HBITMAP bm[28];
 	TCHAR error[100];
 	BOOL accessible;
-
+	
 	bm[0] = LoadBitmap(GetModuleHandle(NULL), MAKEINTRESOURCE(IDB_BITMAP29)); //BLANK
 	bm[1] = LoadBitmap(GetModuleHandle(NULL), MAKEINTRESOURCE(IDB_BITMAP30)); //DRUNK
 	bm[2] = LoadBitmap(GetModuleHandle(NULL), MAKEINTRESOURCE(IDB_BITMAP31)); //FOOD
@@ -122,35 +122,50 @@ void drawMap(HWND hWnd, HDC hDC, PAINTSTRUCT pt) {
 			return;
 		}
 	MemDC = CreateCompatibleDC(hDC);
-	CriaMapaNormal();
-
+	
+	
 
 	for (int i = 0; i < MAP_ROWS; i++)
 	{
 		for (int j = 0; j < MAP_COLUMNS; j++) {
 			switch (g.board.cell[i][j].type) {
 			case WALL:
+				
+
 				SelectObject(MemDC, bm[27]);
 				break;			
 			case BLANK:
+				
+
 				SelectObject(MemDC, bm[0]);
 				break;
 			case FOOD:
+				
+
 				SelectObject(MemDC, bm[2]);
 				break;
 			case GLUE:
+				
+
 				SelectObject(MemDC, bm[3]);
 				break;
 			case GRENADE:
+				
+
 				SelectObject(MemDC, bm[4]);
 				break;
 			case ICE:
+				
+
 				SelectObject(MemDC, bm[5]);
 				break;
 			case VODKA:
+				
+
 				SelectObject(MemDC, bm[26]);
 				break;
 			case O_GLUE:
+				
 				SelectObject(MemDC, bm[6]);
 				break;
 			case O_OIL:
@@ -175,10 +190,10 @@ void drawMap(HWND hWnd, HDC hDC, PAINTSTRUCT pt) {
 		
 	}
 	
-	//// Restore the old bitmap
-	DeleteDC(MemDC);
-	for (short int i = 0; i < 28; i++)
-		DeleteObject(bm[i]);
+	////// Restore the old bitmap
+	//DeleteDC(MemDC);
+	//for (short int i = 0; i < 28; i++)
+	//	DeleteObject(bm[i]);
 
 
 
@@ -222,13 +237,9 @@ void showLobbyMenu(HWND hWnd) {
 void showInGameScreen(HWND hWnd, HDC hDC, PAINTSTRUCT pt) {
 	hideSingleElement(lobbyMenu[0]);
 	drawMap(hWnd, hDC, pt);
-	/*while (1) {
-		Sleep(500);
 
-		gameLogic();
+		
 
-		drawMap(hWnd, hDC, pt);
-	}*/
 }
 
 
@@ -278,12 +289,12 @@ void buttonClickEvent(HWND hWnd, WPARAM wParam) {
 
 
 	case LOGIN_LOCAL_BUTTON:
-		if (clientStatus == SERVERS_OFFLINE) {
-			if (connectToServer(hWnd, FALSE) == -1) {
+		
+			if (connectToServer(hWnd, FALSE,TEXT("NOPE")) == -1) {
 				MessageBox(hWnd, TEXT("No servers are online at the time."), TEXT("Error"), MB_ICONEXCLAMATION);
 				break;
 			}
-		}
+	
 		nameLength = GetWindowTextLength(initialMenu[1]) + 1;
 		if (nameLength <= 1) {
 			MessageBox(hWnd, TEXT("Please type a name"), TEXT("Error"), MB_ICONERROR);
@@ -298,13 +309,11 @@ void buttonClickEvent(HWND hWnd, WPARAM wParam) {
 		TCHAR aux[30];
 		int domainLength;
 
-		if (clientStatus == SERVERS_OFFLINE) {
 			domainLength = GetWindowTextLength(initialMenu[3]) + 1;
-			GetWindowText(initialMenu[1], aux, domainLength);
+			GetWindowText(initialMenu[3], aux, domainLength);
 			if (connectToServer(hWnd, TRUE, aux) == -1) {
 				MessageBox(hWnd, TEXT("No servers are online at the time."), TEXT("Error"), MB_ICONEXCLAMATION);
 				break;
-			}
 		}
 		nameLength = GetWindowTextLength(initialMenu[1]) + 1;
 		if (nameLength <= 1) {
@@ -358,8 +367,7 @@ void buttonClickEvent(HWND hWnd, WPARAM wParam) {
 
 
 	case LOBBYMENU_START_BUTTON:
-		//sendRequest(hWnd, R_STARTGAME);
-		clientStatus = PLAYING;
+		sendRequest(hWnd, R_STARTGAME);
 		InvalidateRect(hWnd, NULL, 1);
 		break;
 
@@ -413,6 +421,7 @@ BOOL CALLBACK createGameDialogProc(HWND hWnd, UINT messg, WPARAM wParam, LPARAM 
 		switch (LOWORD(wParam)) {
 		case IDOK:
 			sendGameParameters(hWnd);
+			
 			EndDialog(hWnd, 0);
 			break;
 		case IDCANCEL:

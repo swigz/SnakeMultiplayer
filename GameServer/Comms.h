@@ -3,12 +3,12 @@
 #include "resource.h"
 
 
-
+game g;
 int ConnectedClients=0;
 HANDLE hPipe = INVALID_HANDLE_VALUE, hThread = NULL, hMutex, canWrite;
 LPTSTR pipename = TEXT("\\\\.\\pipe\\pipename");
 int gameStatus = SERVER_NO_GAME_RUNNING;
-
+HANDLE hTimeThread[MAX_PLAYERS];
 
 
 
@@ -74,6 +74,47 @@ void login(LPVOID param, TCHAR* name, Message answer) {
 		return;
 	}
 }
+DWORD WINAPI TimeThread(DWORD i)
+{
+	Message answer;
+	_tprintf(TEXT("BOSD\n"));
+	_tprintf(TEXT("%d\n"), i);
+
+	while (g.running && players[i].inGame) {
+		Sleep(1000);
+		answer.code = SERVER_UPDATE_MAP;
+		sendMsgLogger(players[i].hPipe, answer.code);
+		g = gameLogic(g);
+		answer.game = g;
+		writeClientResponse(players[i].hPipe, answer);
+	}
+	return 0;
+}
+BOOL isPlayerInGame(LPVOID param)
+{
+	for (int i = 0; i < MAX_PLAYERS; i++)
+		if (players[i].hPipe == param && players[i].inGame)
+			return TRUE;
+
+	return FALSE;
+}
+void startTicking()
+{
+	DWORD dwTimeThreadId = 0;
+	for (short int i = 0; i < 1 ; i++)
+	{
+		hTimeThread[i] = CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)TimeThread, (LPVOID)i, 0, &dwTimeThreadId);
+		if (hTimeThread[i] == NULL)
+		{
+			_tprintf(TEXT("\nError during time's thread creation"));
+			system("pause");
+			return;
+		}
+		else
+			CloseHandle(hTimeThread[i]);
+	}
+}
+
 
 void cleanClientHandles(LPVOID param)
 {
@@ -128,15 +169,18 @@ void joinGameLobby(LPVOID param, Message request, Message answer) {
 	writeServerBroadcast(answer);
 }
 
-void createGameLobby(LPVOID param, Message request, Message answer) {
-	g.maxPlayers = request.game.maxPlayers;
-	g.bots = request.game.bots;
+void createGameLobby(LPVOID param, Message request, Message answer) { 
+	
+	libMaxPlayers = 2;
+	g.bots = 0;
 	g.open = TRUE;
 	g.running = FALSE;
-
+	
+	g = CriaMapaNormal(g);
+	_tprintf(TEXT("---> %d \n\n"), sizeof(g));
 	for (short int i = 0; i < MAX_PLAYERS; i++) {
 		if (players[i].hPipe == param) {
-			
+			players[i].inGame = TRUE;
 			if (request.playerNumber == 2) {
 				players[i].isMulti = TRUE;
 			}
@@ -173,16 +217,18 @@ void processMovement(Message request, LPVOID param) {
 			default:
 				break;
 			}
-
 		}
-
 	}
-
+	gameLogic(g);
+	//draw();
 
 }
 
 void ProcessClientMessage(LPVOID param, Message request, Message answer) {
 	_tprintf(TEXT("[SERVER] Received command from: %s, --- Command: %d\n"), request.name, request.code);
+	if (param == NULL) {
+		_tprintf(TEXT("cliente died \n"));
+	}
 	switch (request.code) {
 	case R_CONNECT: 
 		login(param, request.name, answer);
@@ -203,6 +249,7 @@ void ProcessClientMessage(LPVOID param, Message request, Message answer) {
 		disconnectClient(param, answer);
 		break;
 	case R_STARTGAME:
+		initGame(answer);
 		break;
 	case R_1_MOVEDOWN:
 	case R_1_MOVELEFT:
@@ -214,10 +261,10 @@ void ProcessClientMessage(LPVOID param, Message request, Message answer) {
 	case R_2_MOVEUP:
 		processMovement(request, param);
 		break;
-		
 	defaul:
 		break;
 	}
+
 }
 DWORD WINAPI InstanceThread(LPVOID param)
 {
@@ -285,3 +332,22 @@ DWORD WINAPI InstanceThread(LPVOID param)
 }
 
 
+
+void initGame(Message answer) {
+
+		// Verifica se o jogador está logado no jogo
+			// Ativar a flag
+	_tprintf(TEXT("LET THE GAME BEGIN\n"));
+		g.running = TRUE;
+		//CriaMapaNormal();
+		_tprintf(TEXT("LET  BE SNAKES\n"));
+		g = SnakesSetup(g);
+	_tprintf(TEXT("LET THE TICKING BEGIN\n"));
+		// Começar o tempo
+		startTicking();
+
+		
+		answer.code = SERVER_GAME_STARTED;
+		writeServerBroadcast(answer);
+		gameStatus = SERVER_GAME_IS_RUNNING;
+}
